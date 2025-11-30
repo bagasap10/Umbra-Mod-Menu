@@ -10,8 +10,8 @@ namespace UmbraMenu.Menus
     {
         private static readonly IMenu chestItemsList = new ListMenu(14, new Rect(1503, 10, 20, 20), "CHEST ITEMS MENU");
 
-        public static List<PurchaseInteraction> purchaseInteractions = new List<PurchaseInteraction>();
-        public static List<ChestBehavior> chests = new List<ChestBehavior>();
+        public static List<PurchaseInteraction> purchaseInteractions = new();
+        public static List<ChestBehavior> chests = new();
         public static bool onChestsEnable = true;
         private static bool isClosestChestEquip = false;
         public static bool IsClosestChestEquip
@@ -38,7 +38,7 @@ namespace UmbraMenu.Menus
             {
                 EnableChests();
 
-                List<Button> buttons = new List<Button>();
+                List<Button> buttons = new();
 
                 for (int i = 0; i < UmbraMenu.items.Count; i++)
                 {
@@ -52,7 +52,8 @@ namespace UmbraMenu.Menus
                         continue; // skip ITEM_XXX_NAME junk
 
                     void ButtonAction() => SetChestItem(itemIndex);
-                    Color32 itemColor = ColorCatalog.GetColor(def.colorIndex);
+                    var tierDef = ItemTierCatalog.GetItemTierDef(def.tier);
+                    Color32 itemColor = ColorCatalog.GetColor(tierDef.colorIndex);
                     string itemName;
 
                     if (itemColor.r <= 105 && itemColor.g <= 105 && itemColor.b <= 105)
@@ -144,14 +145,28 @@ namespace UmbraMenu.Menus
         public static ChestBehavior FindClosestChest()
         {
             Dictionary<float, ChestBehavior> chestsWithDistance = new Dictionary<float, ChestBehavior>();
+
             foreach (var chest in chests)
             {
-                if (chest && chest.dropPickup != null)
+                if (chest != null)
                 {
-                    float distanceToChest = Vector3.Distance(Camera.main.transform.position, chest.transform.position);
-                    chestsWithDistance.Add(distanceToChest, chest);
+                    var uniquePickup = chest.currentPickup;          // UniquePickup
+                    if (uniquePickup.pickupIndex != PickupIndex.none)
+                    {
+                        float distanceToChest = Vector3.Distance(Camera.main.transform.position, chest.transform.position);
+                        chestsWithDistance[distanceToChest] = chest;
+                    }
                 }
             }
+
+            //foreach (var chest in chests)
+            //{
+            //    if (chest && chest.dropPickup != null)
+            //    {
+            //        float distanceToChest = Vector3.Distance(Camera.main.transform.position, chest.transform.position);
+            //        chestsWithDistance.Add(distanceToChest, chest);
+            //    }
+            //}
             var keys = chestsWithDistance.Keys.ToList();
             keys.Sort();
             float leastDistance = keys[0];
@@ -166,7 +181,12 @@ namespace UmbraMenu.Menus
             var chestBoundingVector = new Vector3(chestPosition.x, chestPosition.y, chestPosition.z);
             if (chestBoundingVector.z > 0.01)
             {
-                string dropNameColored = Util.GenerateColoredString(Language.GetString(PickupCatalog.GetPickupDef(chest.dropPickup).nameToken), PickupCatalog.GetPickupDef(chest.dropPickup).baseColor);
+
+                var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
+
+                string dropNameColored = Util.GenerateColoredString(Language.GetString(pickupDef.nameToken),pickupDef.baseColor);
+
+                //string dropNameColored = Util.GenerateColoredString(Language.GetString(PickupCatalog.GetPickupDef(chest.dropPickup).nameToken), PickupCatalog.GetPickupDef(chest.dropPickup).baseColor);
                 float distanceToChest = Vector3.Distance(Camera.main.transform.position, FindClosestChest().transform.position);
                 float width = 100f * (distanceToChest / 100);
                 if (width > 125)
@@ -208,7 +228,9 @@ namespace UmbraMenu.Menus
         public static bool CheckClosestChestEquip()
         {
             var chest = FindClosestChest();
-            var equipmentDrop = PickupCatalog.GetPickupDef(chest.dropPickup).equipmentIndex;
+            var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
+            var equipmentDrop = pickupDef.equipmentIndex;
+            //var equipmentDrop = PickupCatalog.GetPickupDef(chest.dropPickup).equipmentIndex;
             if (UmbraMenu.equipment.Contains(equipmentDrop) && equipmentDrop != EquipmentIndex.None)
             {
                 return true;
@@ -218,7 +240,7 @@ namespace UmbraMenu.Menus
 
         public static void UpdateChestListMenu()
         {
-            List<Button> buttons = new List<Button>();
+            List<Button> buttons = new();
             if (isClosestChestEquip)
             {
                 for (int i = 0; i < UmbraMenu.equipment.Count; i++)
@@ -257,7 +279,8 @@ namespace UmbraMenu.Menus
                         continue; // skip debug/unlocalized
 
                     void ButtonAction() => SetChestItem(itemIndex);
-                    Color32 itemColor = ColorCatalog.GetColor(def.colorIndex);
+                    var tierDef = ItemTierCatalog.GetItemTierDef(def.tier);
+                    Color32 itemColor = ColorCatalog.GetColor(tierDef.colorIndex);
                     string itemName;
 
                     if (itemColor.r <= 105 && itemColor.g <= 105 && itemColor.b <= 105)

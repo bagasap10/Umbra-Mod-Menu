@@ -13,7 +13,7 @@ namespace UmbraMenu.Menus
             if (UmbraMenu.characterCollected)
             {
                 int buttonPlacement = 1;
-                List<Button> buttons = new List<Button>();
+                List<Button> buttons = new();
                 for (int i = 0; i < UmbraMenu.equipment.Count; i++)
                 {
                     var equipmentIndex = UmbraMenu.equipment[i];
@@ -63,7 +63,10 @@ namespace UmbraMenu.Menus
                 {
                     if (UmbraMenu.LocalPlayerInv.currentEquipmentIndex == equipIndex)
                     {
-                        UmbraMenu.LocalPlayerInv.SetEquipmentIndex(EquipmentIndex.None);
+                        //UmbraMenu.LocalPlayerInv.SetEquipmentIndex(EquipmentIndex.None);
+
+                        // Removing equipment → use isRemovingEquipment = true
+                        UmbraMenu.LocalPlayerInv.SetEquipmentIndex(EquipmentIndex.None, true);
                         Items.DropEquipmentMethod(equipIndex);
                     }
                     else
@@ -74,7 +77,8 @@ namespace UmbraMenu.Menus
                 }
                 else
                 {
-                    UmbraMenu.LocalPlayerInv.SetEquipmentIndex(equipIndex);
+                    //UmbraMenu.LocalPlayerInv.SetEquipmentIndex(equipIndex);
+                    UmbraMenu.LocalPlayerInv.SetEquipmentIndex(equipIndex, false);
                 }
             }
         }

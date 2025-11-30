@@ -13,7 +13,7 @@ namespace UmbraMenu.Menus
             if (UmbraMenu.characterCollected)
             {
                 int buttonPlacement = 1;
-                List<Button> buttons = new List<Button>();
+                List<Button> buttons = new();
 
                 for (int i = 0; i < UmbraMenu.items.Count; i++)
                 {
@@ -32,7 +32,8 @@ namespace UmbraMenu.Menus
 
                     void ButtonAction() => GiveItem(itemIndex);
 
-                    Color32 itemColor = ColorCatalog.GetColor(def.colorIndex);
+                    var tierDef = ItemTierCatalog.GetItemTierDef(def.tier);
+                    Color32 itemColor = ColorCatalog.GetColor(tierDef.colorIndex);
                     string itemName;
 
                     if (itemColor.r <= 105 && itemColor.g <= 105 && itemColor.b <= 105)
@@ -98,7 +99,8 @@ namespace UmbraMenu.Menus
                 {
                     if (Items.CurrentInventory().Contains(itemIndex))
                     {
-                        UmbraMenu.LocalPlayerInv.RemoveItem(itemIndex, 1);
+                        //UmbraMenu.LocalPlayerInv.RemoveItem(itemIndex, 1);
+                        UmbraMenu.LocalPlayerInv.RemoveItemPermanent(itemIndex, 1);
                         Items.DropItemMethod(itemIndex);
                     }
                     else
@@ -109,7 +111,8 @@ namespace UmbraMenu.Menus
                 }
                 else
                 {
-                    UmbraMenu.LocalPlayerInv.GiveItem(itemIndex, 1);
+                    //UmbraMenu.LocalPlayerInv.GiveItem(itemIndex, 1);
+                    UmbraMenu.LocalPlayerInv.GiveItemPermanent(itemIndex, 1);
                 }
             }
         }

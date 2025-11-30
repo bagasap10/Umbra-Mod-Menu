@@ -203,12 +203,29 @@ namespace UmbraMenu.Menus
         }
 
         [RoR2.Networking.NetworkMessageHandler(msgType = HandleItemId, client = true)]
+
         static void HandleDropItem(NetworkMessage netMsg)
         {
             var dropItem = netMsg.ReadMessage<DropItemPacket>();
             var body = dropItem.Player.GetComponent<CharacterBody>();
-            PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropItem.ItemIndex), body.transform.position + Vector3.up * 1.5f, Vector3.up * 20f + body.transform.forward * 2f);
+
+            PickupIndex pickupIndex = PickupCatalog.FindPickupIndex(dropItem.ItemIndex);
+
+            // New API requires UniquePickup
+            UniquePickup uniquePickup = new UniquePickup(pickupIndex);
+
+            Vector3 position = body.transform.position + Vector3.up * 1.5f;
+            Vector3 velocity = Vector3.up * 20f + body.transform.forward * 2f;
+
+            PickupDropletController.CreatePickupDroplet(uniquePickup,position,velocity,false);
         }
+
+        //static void HandleDropItem(NetworkMessage netMsg)
+        //{
+        //    var dropItem = netMsg.ReadMessage<DropItemPacket>();
+        //    var body = dropItem.Player.GetComponent<CharacterBody>();
+        //    PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropItem.ItemIndex), body.transform.position + Vector3.up * 1.5f, Vector3.up * 20f + body.transform.forward * 2f);
+        //}
 
         public static void DropItemMethod(ItemIndex itemIndex)
         {
@@ -252,12 +269,31 @@ namespace UmbraMenu.Menus
         }
 
         [RoR2.Networking.NetworkMessageHandler(msgType = HandleEquipmentId, client = true)]
+
         static void HandleDropEquipment(NetworkMessage netMsg)
         {
             var dropEquipment = netMsg.ReadMessage<DropEquipmentPacket>();
             var body = dropEquipment.Player.GetComponent<CharacterBody>();
-            PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropEquipment.EquipmentIndex), body.transform.position + Vector3.up * 1.5f, Vector3.up * 20f + body.transform.forward * 2f);
+
+            // Find PickupIndex for the equipment
+            PickupIndex pickupIndex = PickupCatalog.FindPickupIndex(dropEquipment.EquipmentIndex);
+
+            // Wrap in UniquePickup (required for new API)
+            UniquePickup uniquePickup = new UniquePickup(pickupIndex);
+
+            Vector3 position = body.transform.position + Vector3.up * 1.5f;
+            Vector3 velocity = Vector3.up * 20f + body.transform.forward * 2f;
+
+            // Use NEW overload (4 params) — not obsolete
+            PickupDropletController.CreatePickupDroplet(uniquePickup,position,velocity,false);
         }
+
+        //static void HandleDropEquipment(NetworkMessage netMsg)
+        //{
+        //    var dropEquipment = netMsg.ReadMessage<DropEquipmentPacket>();
+        //    var body = dropEquipment.Player.GetComponent<CharacterBody>();
+        //    PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropEquipment.EquipmentIndex), body.transform.position + Vector3.up * 1.5f, Vector3.up * 20f + body.transform.forward * 2f);
+        //}
 
         public static void DropEquipmentMethod(EquipmentIndex equipmentIndex)
         {
@@ -279,11 +315,21 @@ namespace UmbraMenu.Menus
                 // Loops through every item in ItemIndex enum
                 foreach (ItemIndex itemIndex in CurrentInventory())
                 {
+                    //// If an item exists, delete the whole stack of it
+                    //UmbraMenu.LocalPlayerInv.itemAcquisitionOrder.Remove(itemIndex);
+                    //UmbraMenu.LocalPlayerInv.ResetItem(itemIndex);
+                    //int itemCount = UmbraMenu.LocalPlayerInv.GetItemCount(itemIndex);
+                    //UmbraMenu.LocalPlayerInv.RemoveItem(itemIndex, itemCount);
+
                     // If an item exists, delete the whole stack of it
                     UmbraMenu.LocalPlayerInv.itemAcquisitionOrder.Remove(itemIndex);
-                    UmbraMenu.LocalPlayerInv.ResetItem(itemIndex);
-                    int itemCount = UmbraMenu.LocalPlayerInv.GetItemCount(itemIndex);
-                    UmbraMenu.LocalPlayerInv.RemoveItem(itemIndex, itemCount);
+
+                    // Clear all tracking for this item from the permanent inventory
+                    UmbraMenu.LocalPlayerInv.ResetItemPermanent(itemIndex);
+
+                    // Get how many permanent stacks we have and remove them
+                    int itemCount = UmbraMenu.LocalPlayerInv.GetItemCountPermanent(itemIndex);
+                    UmbraMenu.LocalPlayerInv.RemoveItemPermanent(itemIndex, itemCount);
 
                     // Destroys BeetleGuardAllies on inventory clear, other wise they dont get removed until next stage.
                     var localUser = LocalUserManager.GetFirstLocalUser();
@@ -317,7 +363,8 @@ namespace UmbraMenu.Menus
                         }
                     }
                 }
-                UmbraMenu.LocalPlayerInv.SetEquipmentIndex(EquipmentIndex.None);
+                //UmbraMenu.LocalPlayerInv.SetEquipmentIndex(EquipmentIndex.None);
+                UmbraMenu.LocalPlayerInv.SetEquipmentIndex(EquipmentIndex.None, true);
             }
             Player.RemoveAllBuffs();
         }
@@ -333,7 +380,8 @@ namespace UmbraMenu.Menus
                     for (int i = 0; i < num; i++)
                     {
                         List<ItemIndex> list = weightedSelection.Evaluate(UnityEngine.Random.value);
-                        UmbraMenu.LocalPlayerInv.GiveItem(list[UnityEngine.Random.Range(0, list.Count)], 1);
+                        //UmbraMenu.LocalPlayerInv.GiveItem(list[UnityEngine.Random.Range(0, list.Count)], 1);
+                        UmbraMenu.LocalPlayerInv.GiveItemPermanent(list[UnityEngine.Random.Range(0, list.Count)], 1);
                     }
                 }
             }
@@ -395,7 +443,8 @@ namespace UmbraMenu.Menus
                     //plantonhit kills you when you pick it up
                     if (itemName == "PlantOnHit" || itemName == "HealthDecay" || itemName == "TonicAffliction" || itemName == "BurnNearby" || itemName == "CrippleWardOnLevel" || itemName == "Ghost" || itemName == "ExtraLifeConsumed")
                         continue;
-                    UmbraMenu.LocalPlayerInv.GiveItem(itemIndex, allItemsQuantity);
+                    //UmbraMenu.LocalPlayerInv.GiveItem(itemIndex, allItemsQuantity);
+                    UmbraMenu.LocalPlayerInv.GiveItemPermanent(itemIndex, allItemsQuantity);
                 }
             }
         }
@@ -409,11 +458,26 @@ namespace UmbraMenu.Menus
         //Sets equipment cooldown to 0 if its on cooldown
         public static void NoEquipmentCooldown()
         {
-            EquipmentState equipment = UmbraMenu.LocalPlayerInv.GetEquipment((uint)UmbraMenu.LocalPlayerInv.activeEquipmentSlot);
+            //EquipmentState equipment = UmbraMenu.LocalPlayerInv.GetEquipment((uint)UmbraMenu.LocalPlayerInv.activeEquipmentSlot);
+            
+            // Updated to use the two-parameter overload per the obsoletion message.
+            // Pass 0 as the equipment set (default).
+            EquipmentState equipment = UmbraMenu.LocalPlayerInv.GetEquipment((uint)UmbraMenu.LocalPlayerInv.activeEquipmentSlot,0);
 
             if (equipment.chargeFinishTime != Run.FixedTimeStamp.zero)
             {
-                UmbraMenu.LocalPlayerInv.SetEquipment(new EquipmentState(equipment.equipmentIndex, Run.FixedTimeStamp.zero, equipment.charges), (uint)UmbraMenu.LocalPlayerInv.activeEquipmentSlot);
+                EquipmentState newState = new EquipmentState(
+                    equipment.equipmentIndex,
+                    Run.FixedTimeStamp.zero,
+                    equipment.charges
+                );
+
+                // NEW valid overload (3 parameters)
+                UmbraMenu.LocalPlayerInv.SetEquipment(
+                    newState,
+                    (uint)UmbraMenu.LocalPlayerInv.activeEquipmentSlot,
+                    0 // set index
+                );
             }
         }
 
@@ -430,7 +494,8 @@ namespace UmbraMenu.Menus
                 bool unreleasednullItem = unreleasedItems.Any(itemDef.name.Contains);
                 if (!unreleasednullItem)
                 {
-                    int itemCount = UmbraMenu.LocalPlayerInv.GetItemCount(itemIndex);
+                    //int itemCount = UmbraMenu.LocalPlayerInv.GetItemCount(itemIndex);
+                    int itemCount = UmbraMenu.LocalPlayerInv.GetItemCountPermanent(itemIndex);
                     if (itemCount > 0) // If item is in inventory
                     {
                         currentInventory.Add(itemIndex); // add to list

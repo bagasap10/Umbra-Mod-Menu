@@ -294,8 +294,12 @@ namespace UmbraMenu.Menus
                         // works
                         // Revive
                         Traverse.Create(UmbraMenu.LocalHealth).Field("wasAlive").SetValue(false);
-                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLife"));
-                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
+                        //int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLife"));
+                        //int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
+
+                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCountPermanent(ItemCatalog.FindItemIndex("ExtraLife"));
+                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCountPermanent(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
+
                         if (UmbraMenu.LocalHealth.health < 1)
                         {
                             if (itemELCount == 0)
@@ -306,11 +310,13 @@ namespace UmbraMenu.Menus
                         }
                         if (itemELCCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
+                            //UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItemPermanent(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
                         }
                         if (itemELCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
+                            //UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItemPermanent(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
                         }
                         break;
                     }
@@ -354,15 +360,20 @@ namespace UmbraMenu.Menus
                             UmbraMenu.LocalHealth.health = 1;
                         }
                         Traverse.Create(UmbraMenu.LocalHealth).Field("wasAlive").SetValue(true);
-                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLife"));
-                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
+                        //int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLife"));
+                        //int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
+
+                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCountPermanent(ItemCatalog.FindItemIndex("ExtraLife"));
+                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCountPermanent(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
                         if (itemELCCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
+                            //UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItemPermanent(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
                         }
                         if (itemELCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
+                            //UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItemPermanent(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
                         }
                         break;
                     }
