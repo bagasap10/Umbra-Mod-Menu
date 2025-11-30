@@ -12,7 +12,7 @@ namespace UmbraMenu
     {
         public const string
             NAME = "U M B R A",
-            VERSION = "2.0.6";
+            VERSION = "Alloyed Collective";
 
 
 
@@ -712,6 +712,112 @@ namespace UmbraMenu
                 }
             }
 
+            //if (mainMenu.IsEnabled())
+            //{
+            //    Cursor.visible = true;
+            //    if (characterCollected)
+            //    {
+            //        if (AllowNavigation)
+            //        {
+            //            if (Input.GetKeyDown(KeyCode.DownArrow))
+            //            {
+            //                if (!navigationToggle)
+            //                {
+            //                    Utility.CloseOpenMenus();
+            //                }
+
+            //                navigationToggle = true;
+            //                Navigation.buttonIndex++;
+            //            }
+            //            if (Input.GetKeyDown(KeyCode.UpArrow))
+            //            {
+            //                if (!navigationToggle)
+            //                {
+            //                    Utility.CloseOpenMenus();
+            //                }
+
+            //                navigationToggle = true;
+            //                Navigation.buttonIndex--;
+            //            }
+            //        }
+            //    }
+            //    if (navigationToggle && AllowNavigation)
+            //    {
+            //        if (Input.GetKeyDown(KeyCode.V))
+            //        {
+            //            int oldMenuIndex = Navigation.menuIndex;
+            //            Navigation.PressBtn(Navigation.menuIndex, Navigation.buttonIndex);
+            //            int newMenuIndex = Navigation.menuIndex;
+
+            //            if (oldMenuIndex != newMenuIndex)
+            //            {
+            //                Navigation.buttonIndex = 1;
+            //            }
+            //        }
+            //        if (Input.GetKeyDown(KeyCode.RightArrow))
+            //        {
+            //            bool playerPlusMinusBtn = Navigation.menuIndex == 1 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
+            //            bool statsPlusMinusBtn = Navigation.menuIndex == 8 && Enumerable.Range(1, 6).Contains(Navigation.buttonIndex);
+            //            bool itemPlusMinusBtn = Navigation.menuIndex == 3 && Enumerable.Range(1, 2).Contains(Navigation.buttonIndex);
+            //            bool spawnPlusMinusBtn = Navigation.menuIndex == 4 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
+            //            bool settingsPlusMinusBtn = Navigation.menuIndex == 7 && Navigation.buttonIndex == 1;
+            //            if (playerPlusMinusBtn || itemPlusMinusBtn || statsPlusMinusBtn || spawnPlusMinusBtn || settingsPlusMinusBtn)
+            //            {
+            //                Navigation.IncreaseValue(Navigation.menuIndex, Navigation.buttonIndex);
+            //            }
+            //            else
+            //            {
+            //                float oldMenuIndex = Navigation.menuIndex;
+            //                Navigation.PressBtn(Navigation.menuIndex, Navigation.buttonIndex);
+            //                float newMenuIndex = Navigation.menuIndex;
+
+            //                if (oldMenuIndex != newMenuIndex)
+            //                {
+            //                    Navigation.buttonIndex = 1;
+            //                }
+            //            }
+            //        }
+            //        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            //        {
+            //            bool playerPlusMinusBtn = Navigation.menuIndex == 1 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
+            //            bool statsPlusMinusBtn = Navigation.menuIndex == 8 && Enumerable.Range(1, 6).Contains(Navigation.buttonIndex);
+            //            bool itemPlusMinusBtn = Navigation.menuIndex == 3 && Enumerable.Range(1, 2).Contains(Navigation.buttonIndex);
+            //            bool spawnPlusMinusBtn = Navigation.menuIndex == 4 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
+            //            bool settingsPlusMinusBtn = Navigation.menuIndex == 7 && Navigation.buttonIndex == 1;
+            //            if (playerPlusMinusBtn || itemPlusMinusBtn || statsPlusMinusBtn || spawnPlusMinusBtn || settingsPlusMinusBtn)
+            //            {
+            //                Navigation.DecreaseValue(Navigation.menuIndex, Navigation.buttonIndex);
+            //            }
+            //            else
+            //            {
+            //                Navigation.GoBackAMenu();
+            //            }
+            //        }
+            //        if (Input.GetKeyDown(KeyCode.Backspace))
+            //        {
+            //            Navigation.GoBackAMenu();
+            //        }
+
+            //        if (buffListMenu.IsEnabled() || characterListMenu.IsEnabled() || chestItemListMenu.IsEnabled() || equipmentListMenu.IsEnabled() || itemListMenu.IsEnabled() || spawnListMenu.IsEnabled() || keybindListMenu.IsEnabled())
+            //        {
+            //            if (!scrolled)
+            //            {
+            //                if (Input.GetAxis("Mouse ScrollWheel") != 0f) // Scrolled
+            //                {
+            //                    scrolled = true;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
+            //                {
+            //                    scrolled = false;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
             if (mainMenu.IsEnabled())
             {
                 Cursor.visible = true;
@@ -719,7 +825,8 @@ namespace UmbraMenu
                 {
                     if (AllowNavigation)
                     {
-                        if (Input.GetKeyDown(KeyCode.DownArrow))
+                        // num2 = move down
+                        if (Input.GetKeyDown(KeyCode.Keypad2))
                         {
                             if (!navigationToggle)
                             {
@@ -729,7 +836,9 @@ namespace UmbraMenu
                             navigationToggle = true;
                             Navigation.buttonIndex++;
                         }
-                        if (Input.GetKeyDown(KeyCode.UpArrow))
+
+                        // num8 = move up
+                        if (Input.GetKeyDown(KeyCode.Keypad8))
                         {
                             if (!navigationToggle)
                             {
@@ -743,7 +852,8 @@ namespace UmbraMenu
                 }
                 if (navigationToggle && AllowNavigation)
                 {
-                    if (Input.GetKeyDown(KeyCode.V))
+                    // num5 = OK / select
+                    if (Input.GetKeyDown(KeyCode.Keypad5))
                     {
                         int oldMenuIndex = Navigation.menuIndex;
                         Navigation.PressBtn(Navigation.menuIndex, Navigation.buttonIndex);
@@ -754,13 +864,16 @@ namespace UmbraMenu
                             Navigation.buttonIndex = 1;
                         }
                     }
-                    if (Input.GetKeyDown(KeyCode.RightArrow))
+
+                    // num6 = "go forward" (same behaviour as old RightArrow)
+                    if (Input.GetKeyDown(KeyCode.Keypad6))
                     {
                         bool playerPlusMinusBtn = Navigation.menuIndex == 1 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
                         bool statsPlusMinusBtn = Navigation.menuIndex == 8 && Enumerable.Range(1, 6).Contains(Navigation.buttonIndex);
                         bool itemPlusMinusBtn = Navigation.menuIndex == 3 && Enumerable.Range(1, 2).Contains(Navigation.buttonIndex);
                         bool spawnPlusMinusBtn = Navigation.menuIndex == 4 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
                         bool settingsPlusMinusBtn = Navigation.menuIndex == 7 && Navigation.buttonIndex == 1;
+
                         if (playerPlusMinusBtn || itemPlusMinusBtn || statsPlusMinusBtn || spawnPlusMinusBtn || settingsPlusMinusBtn)
                         {
                             Navigation.IncreaseValue(Navigation.menuIndex, Navigation.buttonIndex);
@@ -777,13 +890,16 @@ namespace UmbraMenu
                             }
                         }
                     }
-                    if (Input.GetKeyDown(KeyCode.LeftArrow))
+
+                    // num4 = go back / decrease
+                    if (Input.GetKeyDown(KeyCode.Keypad4))
                     {
                         bool playerPlusMinusBtn = Navigation.menuIndex == 1 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
                         bool statsPlusMinusBtn = Navigation.menuIndex == 8 && Enumerable.Range(1, 6).Contains(Navigation.buttonIndex);
                         bool itemPlusMinusBtn = Navigation.menuIndex == 3 && Enumerable.Range(1, 2).Contains(Navigation.buttonIndex);
                         bool spawnPlusMinusBtn = Navigation.menuIndex == 4 && Enumerable.Range(1, 3).Contains(Navigation.buttonIndex);
                         bool settingsPlusMinusBtn = Navigation.menuIndex == 7 && Navigation.buttonIndex == 1;
+
                         if (playerPlusMinusBtn || itemPlusMinusBtn || statsPlusMinusBtn || spawnPlusMinusBtn || settingsPlusMinusBtn)
                         {
                             Navigation.DecreaseValue(Navigation.menuIndex, Navigation.buttonIndex);
@@ -793,12 +909,11 @@ namespace UmbraMenu
                             Navigation.GoBackAMenu();
                         }
                     }
-                    if (Input.GetKeyDown(KeyCode.Backspace))
-                    {
-                        Navigation.GoBackAMenu();
-                    }
 
-                    if (buffListMenu.IsEnabled() || characterListMenu.IsEnabled() || chestItemListMenu.IsEnabled() || equipmentListMenu.IsEnabled() || itemListMenu.IsEnabled() || spawnListMenu.IsEnabled() || keybindListMenu.IsEnabled())
+                    // scroll-list reset using num2/num8 instead of arrows
+                    if (buffListMenu.IsEnabled() || characterListMenu.IsEnabled() || chestItemListMenu.IsEnabled() ||
+                        equipmentListMenu.IsEnabled() || itemListMenu.IsEnabled() || spawnListMenu.IsEnabled() ||
+                        keybindListMenu.IsEnabled())
                     {
                         if (!scrolled)
                         {
@@ -809,7 +924,7 @@ namespace UmbraMenu
                         }
                         else
                         {
-                            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
+                            if (Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Keypad8))
                             {
                                 scrolled = false;
                             }
@@ -817,6 +932,8 @@ namespace UmbraMenu
                     }
                 }
             }
+
+
             else if (!mainMenu.IsEnabled())
             {
                 navigationToggle = false;
@@ -843,7 +960,7 @@ namespace UmbraMenu
             #endregion
 
             #region Main Menu Keybind
-            if (Input.GetKeyDown(keybindDict["MAIN MENU"].KeyCode))
+            if (Input.GetKeyDown(keybindDict["MAIN MENU"].KeyCode) || Input.GetKeyDown(KeyCode.Keypad0))
             {
                 if (InGameCheck())
                 {

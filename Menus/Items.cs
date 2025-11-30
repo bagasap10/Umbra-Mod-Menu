@@ -70,10 +70,12 @@ namespace UmbraMenu.Menus
             {
                 allItemsQuantity = value;
                 giveAllItems.SetText($"GIVE ALL ITEMS : {allItemsQuantity}");
+                giveAllNonLunarVoidItems?.SetText($"GIVE ALL ITEMS (NO LUNAR/VOID) : {allItemsQuantity}");
             }
         }
 
         public Button giveAllItems;
+        public Button giveAllNonLunarVoidItems;
         public Button rollItems;
         public Button toggleItemListMenu;
         public Button toggleEquipmentListMenu;
@@ -92,19 +94,21 @@ namespace UmbraMenu.Menus
                 void ToggleEquipmentListMenu() => UmbraMenu.menus[13].ToggleMenu();
 
                 giveAllItems = new Button(new MulButton(this, 1, $"GIVE ALL ITEMS : {AllItemsQuantity}", GiveAllItems, IncreaseGiveAllQuantity, DecreaseGiveAllQuantity));
-                rollItems = new Button(new MulButton(this, 2, $"ROLL ITEMS : {ItemsToRoll}", RollItems, IncreaseItemsToRoll, DecreaseItemsToRoll));
-                toggleItemListMenu = new Button(new TogglableButton(this, 3, "ITEM SPAWN MENU : OFF", "ITEM SPAWN MENU : ON", ToggleItemsListMenu, ToggleItemsListMenu));
-                toggleEquipmentListMenu = new Button(new TogglableButton(this, 4, "EQUIPMENT SPAWN MENU : OFF", "EQUIPMENT SPAWN MENU : ON", ToggleEquipmentListMenu, ToggleEquipmentListMenu));
-                toggleDropItems = new Button(new TogglableButton(this, 5, "DROP ITEMS : OFF", "DROP ITEMS : ON", ToggleDrop, ToggleDrop));
-                toggleDropInvItems = new Button(new TogglableButton(this, 6, "DROP FROM INVENTORY : OFF", "DROP FROM INVENTORY : ON", ToggleDropFromInventory, ToggleDropFromInventory));
-                toggleEquipmentCD = new Button(new TogglableButton(this, 7, "INFINITE EQUIPMENT : OFF", "INFINITE EQUIPMENT : ON", ToggleEquipmentCD, ToggleEquipmentCD));
-                stackInventory = new Button(new NormalButton(this, 8, "STACK INVENTORY", StackInventory));
-                clearInventory = new Button(new NormalButton(this, 9, "CLEAR INVENTORY", ClearInventory));
-                toggleChestItemMenu = new Button(new TogglableButton(this, 10, "CHANGE CHEST ITEM : OFF", "CHANGE CHEST ITEM : ON", ToggleChestItemListMenu, ToggleChestItemListMenu));
+                giveAllNonLunarVoidItems = new Button(new MulButton(this,2 ,$"GIVE ALL ITEMS (NO LUNAR/VOID) : {AllItemsQuantity}",GiveAllNonLunarVoidItems,IncreaseGiveAllQuantity,DecreaseGiveAllQuantity));
+                rollItems = new Button(new MulButton(this, 3, $"ROLL ITEMS : {ItemsToRoll}", RollItems, IncreaseItemsToRoll, DecreaseItemsToRoll));
+                toggleItemListMenu = new Button(new TogglableButton(this, 4, "ITEM SPAWN MENU : OFF", "ITEM SPAWN MENU : ON", ToggleItemsListMenu, ToggleItemsListMenu));
+                toggleEquipmentListMenu = new Button(new TogglableButton(this, 5, "EQUIPMENT SPAWN MENU : OFF", "EQUIPMENT SPAWN MENU : ON", ToggleEquipmentListMenu, ToggleEquipmentListMenu));
+                toggleDropItems = new Button(new TogglableButton(this, 6, "DROP ITEMS : OFF", "DROP ITEMS : ON", ToggleDrop, ToggleDrop));
+                toggleDropInvItems = new Button(new TogglableButton(this, 7, "DROP FROM INVENTORY : OFF", "DROP FROM INVENTORY : ON", ToggleDropFromInventory, ToggleDropFromInventory));
+                toggleEquipmentCD = new Button(new TogglableButton(this, 8, "INFINITE EQUIPMENT : OFF", "INFINITE EQUIPMENT : ON", ToggleEquipmentCD, ToggleEquipmentCD));
+                stackInventory = new Button(new NormalButton(this, 9, "STACK INVENTORY", StackInventory));
+                clearInventory = new Button(new NormalButton(this, 10, "CLEAR INVENTORY", ClearInventory));
+                toggleChestItemMenu = new Button(new TogglableButton(this, 11, "CHANGE CHEST ITEM : OFF", "CHANGE CHEST ITEM : ON", ToggleChestItemListMenu, ToggleChestItemListMenu));
 
                 AddButtons(new List<Button>()
                 {
                     giveAllItems,
+                    giveAllNonLunarVoidItems,
                     rollItems,
                     toggleItemListMenu,
                     toggleEquipmentListMenu,
@@ -156,20 +160,42 @@ namespace UmbraMenu.Menus
             noEquipmentCD = !noEquipmentCD;
         }
 
+
+
         private void ToggleChestItemListMenu()
         {
             if (toggleChestItemMenu.IsEnabled())
             {
+                // Turning OFF
                 ChestItemList.DisableChests();
+                ChestItemList.selectedChest = null;
                 chestItemList = false;
             }
             else
             {
+                // Turning ON – lock closest chest
                 ChestItemList.EnableChests();
+                ChestItemList.LockClosestChest();
                 chestItemList = true;
             }
+
             UmbraMenu.menus[14].ToggleMenu();
         }
+
+        //private void ToggleChestItemListMenu()
+        //{
+        //    if (toggleChestItemMenu.IsEnabled())
+        //    {
+        //        ChestItemList.DisableChests();
+        //        chestItemList = false;
+        //    }
+        //    else
+        //    {
+        //        ChestItemList.EnableChests();
+        //        chestItemList = true;
+        //    }
+        //    UmbraMenu.menus[14].ToggleMenu();
+        //}
         #endregion
 
         #region Drop Item Handle
@@ -449,6 +475,40 @@ namespace UmbraMenu.Menus
             }
         }
 
+        // Gives all items except Lunar & Void items
+        public void GiveAllNonLunarVoidItems()
+        {
+            if (UmbraMenu.LocalPlayerInv)
+            {
+                foreach (ItemIndex itemIndex in UmbraMenu.items)
+                {
+                    ItemDef itemDef = ItemCatalog.GetItemDef(itemIndex);
+                    string itemName = itemDef.name;
+
+                    // Skip “dangerous” items like the original function
+                    if (itemName == "PlantOnHit" || itemName == "HealthDecay" ||
+                        itemName == "TonicAffliction" || itemName == "BurnNearby" ||
+                        itemName == "CrippleWardOnLevel" || itemName == "Ghost" ||
+                        itemName == "ExtraLifeConsumed")
+                        continue;
+
+                    // Exclude Lunar & Void items based on tier color
+                    var tierDef = ItemTierCatalog.GetItemTierDef(itemDef.tier);
+                    if (tierDef != null)
+                    {
+                        if (tierDef.colorIndex == ColorCatalog.ColorIndex.LunarItem ||
+                            tierDef.colorIndex == ColorCatalog.ColorIndex.VoidItem)
+                        {
+                            continue;
+                        }
+                    }
+
+                    UmbraMenu.LocalPlayerInv.GiveItemPermanent(itemIndex, allItemsQuantity);
+                }
+            }
+        }
+
+
         //Does the same thing as the shrine of order. Orders all your items into stacks of several random items.
         public void StackInventory()
         {
@@ -526,7 +586,7 @@ namespace UmbraMenu.Menus
 
         public void DecreaseGiveAllQuantity()
         {
-            if (AllItemsQuantity > 1)
+            if (AllItemsQuantity >= 1)
                 AllItemsQuantity -= 1;
         }
         #endregion

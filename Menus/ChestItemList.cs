@@ -14,6 +14,8 @@ namespace UmbraMenu.Menus
         public static List<ChestBehavior> chests = new();
         public static bool onChestsEnable = true;
         private static bool isClosestChestEquip = false;
+
+        public static ChestBehavior selectedChest;
         public static bool IsClosestChestEquip
         {
             get
@@ -92,6 +94,20 @@ namespace UmbraMenu.Menus
                 SetActivatingButton(Utility.FindButtonById(3, 10));
                 SetPrevMenuId(3);
             }
+        }
+
+        public static void LockClosestChest()
+        {
+            selectedChest = FindClosestChest();
+        }
+
+        public static ChestBehavior GetSelectedChest()
+        {
+            if (selectedChest)
+                return selectedChest;
+
+            selectedChest = FindClosestChest();
+            return selectedChest;
         }
 
         public override void Draw()
@@ -176,58 +192,141 @@ namespace UmbraMenu.Menus
 
         public static void RenderClosestChest()
         {
-            ChestBehavior chest = FindClosestChest();
+            ChestBehavior chest = GetSelectedChest();
+            if (!chest)
+                return;
+
             Vector3 chestPosition = Camera.main.WorldToScreenPoint(chest.transform.position);
             var chestBoundingVector = new Vector3(chestPosition.x, chestPosition.y, chestPosition.z);
-            if (chestBoundingVector.z > 0.01)
+            if (chestBoundingVector.z > 0.01f)
             {
-
                 var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
+                string dropNameColored = Util.GenerateColoredString(
+                    Language.GetString(pickupDef.nameToken),
+                    pickupDef.baseColor
+                );
 
-                string dropNameColored = Util.GenerateColoredString(Language.GetString(pickupDef.nameToken),pickupDef.baseColor);
+                float distanceToChest = Vector3.Distance(Camera.main.transform.position, chest.transform.position);
+                float width = 100f * (distanceToChest / 100f);
+                if (width > 125f) width = 125f;
 
-                //string dropNameColored = Util.GenerateColoredString(Language.GetString(PickupCatalog.GetPickupDef(chest.dropPickup).nameToken), PickupCatalog.GetPickupDef(chest.dropPickup).baseColor);
-                float distanceToChest = Vector3.Distance(Camera.main.transform.position, FindClosestChest().transform.position);
-                float width = 100f * (distanceToChest / 100);
-                if (width > 125)
-                {
-                    width = 125;
-                }
-                float height = 100f * (distanceToChest / 100);
-                if (height > 125)
-                {
-                    height = 125;
-                }
+                float height = 100f * (distanceToChest / 100f);
+                if (height > 125f) height = 125f;
 
                 if (Render.renderInteractables)
                 {
-                    GUI.Label(new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f), $"Selected Chest", Styles.SelectedChestStyle);
+                    GUI.Label(
+                        new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f),
+                        $"Selected Chest",
+                        Styles.SelectedChestStyle
+                    );
                 }
                 else
                 {
-                    GUI.Label(new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f), $"Selected Chest\n{dropNameColored}", Styles.SelectedChestStyle);
+                    GUI.Label(
+                        new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f),
+                        $"Selected Chest\n{dropNameColored}",
+                        Styles.SelectedChestStyle
+                    );
                 }
-                ESPHelper.DrawBox(chestBoundingVector.x - width / 2, (float)Screen.height - chestBoundingVector.y - height / 2, width, height, new Color32(17, 204, 238, 255));
+
+                ESPHelper.DrawBox(
+                    chestBoundingVector.x - width / 2f,
+                    (float)Screen.height - chestBoundingVector.y - height / 2f,
+                    width,
+                    height,
+                    new Color32(17, 204, 238, 255)
+                );
             }
         }
 
+        //public static void RenderClosestChest()
+        //{
+        //    ChestBehavior chest = FindClosestChest();
+        //    Vector3 chestPosition = Camera.main.WorldToScreenPoint(chest.transform.position);
+        //    var chestBoundingVector = new Vector3(chestPosition.x, chestPosition.y, chestPosition.z);
+        //    if (chestBoundingVector.z > 0.01)
+        //    {
+
+        //        var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
+
+        //        string dropNameColored = Util.GenerateColoredString(Language.GetString(pickupDef.nameToken),pickupDef.baseColor);
+
+        //        //string dropNameColored = Util.GenerateColoredString(Language.GetString(PickupCatalog.GetPickupDef(chest.dropPickup).nameToken), PickupCatalog.GetPickupDef(chest.dropPickup).baseColor);
+        //        float distanceToChest = Vector3.Distance(Camera.main.transform.position, FindClosestChest().transform.position);
+        //        float width = 100f * (distanceToChest / 100);
+        //        if (width > 125)
+        //        {
+        //            width = 125;
+        //        }
+        //        float height = 100f * (distanceToChest / 100);
+        //        if (height > 125)
+        //        {
+        //            height = 125;
+        //        }
+
+        //        if (Render.renderInteractables)
+        //        {
+        //            GUI.Label(new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f), $"Selected Chest", Styles.SelectedChestStyle);
+        //        }
+        //        else
+        //        {
+        //            GUI.Label(new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f), $"Selected Chest\n{dropNameColored}", Styles.SelectedChestStyle);
+        //        }
+        //        ESPHelper.DrawBox(chestBoundingVector.x - width / 2, (float)Screen.height - chestBoundingVector.y - height / 2, width, height, new Color32(17, 204, 238, 255));
+        //    }
+        //}
+
+        //public static void SetChestItem(ItemIndex itemIndex)
+        //{
+        //    var chest = GetSelectedChest();
+
+        //    //var chest = FindClosestChest();
+        //    PickupIndex newPickupIndex = PickupCatalog.FindPickupIndex(itemIndex);
+        //    Traverse.Create(chest).Field("<dropPickup>k__BackingField").SetValue(newPickupIndex);
+        //}
+
         public static void SetChestItem(ItemIndex itemIndex)
         {
-            var chest = FindClosestChest();
-            PickupIndex newPickupIndex = PickupCatalog.FindPickupIndex(itemIndex);
-            Traverse.Create(chest).Field("<dropPickup>k__BackingField").SetValue(newPickupIndex);
+            var chest = selectedChest != null ? selectedChest : FindClosestChest();
+            if (!chest) return;
+
+            PickupIndex pickupIndex = PickupCatalog.FindPickupIndex(itemIndex);
+            UniquePickup uniquePickup = new UniquePickup(pickupIndex);
+
+            // currentPickup is read-only, so set its backing field via Harmony
+            Traverse.Create(chest)
+                    .Field("<currentPickup>k__BackingField")
+                    .SetValue(uniquePickup);
         }
+
+        //public static void SetChestEquipment(EquipmentIndex equipmentIndex)
+        //{
+        //    var chest = GetSelectedChest();
+
+        //    //var chest = FindClosestChest();
+        //    PickupIndex newPickupIndex = PickupCatalog.FindPickupIndex(equipmentIndex);
+        //    Traverse.Create(chest).Field("<dropPickup>k__BackingField").SetValue(newPickupIndex);
+        //}
 
         public static void SetChestEquipment(EquipmentIndex equipmentIndex)
         {
-            var chest = FindClosestChest();
-            PickupIndex newPickupIndex = PickupCatalog.FindPickupIndex(equipmentIndex);
-            Traverse.Create(chest).Field("<dropPickup>k__BackingField").SetValue(newPickupIndex);
+            var chest = selectedChest != null ? selectedChest : FindClosestChest();
+            if (!chest) return;
+
+            PickupIndex pickupIndex = PickupCatalog.FindPickupIndex(equipmentIndex);
+            UniquePickup uniquePickup = new UniquePickup(pickupIndex);
+
+            Traverse.Create(chest)
+                    .Field("<currentPickup>k__BackingField")
+                    .SetValue(uniquePickup);
         }
 
         public static bool CheckClosestChestEquip()
         {
-            var chest = FindClosestChest();
+            var chest = GetSelectedChest();
+
+            //var chest = FindClosestChest();
             var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
             var equipmentDrop = pickupDef.equipmentIndex;
             //var equipmentDrop = PickupCatalog.GetPickupDef(chest.dropPickup).equipmentIndex;
