@@ -18,6 +18,7 @@ namespace UmbraMenu.Menus
         public Button spawnBlue;
         public Button spawnCele;
         public Button spawnGold;
+        public Button spawnHidden;
 
         public Teleporter() : base(teleporter)
         {
@@ -27,6 +28,7 @@ namespace UmbraMenu.Menus
                 void SpawnBluePortal() => SpawnPortals("blue");
                 void SpawnCelestalPortal() => SpawnPortals("cele");
                 void SpawnGoldPortal() => SpawnPortals("gold");
+                void SpawnHiddenPortal() => SpawnPortals("hidden");
                 skipStage = new Button(new NormalButton(this, 1, "SKIP STAGE", SkipStage));
                 instaTele = new Button(new NormalButton(this, 2, "INSTA TELE/PURPLE CHARGE", InstaTeleporter));
                 addMountain = new Button(new NormalButton(this, 3, $"ADD MOUNTAIN-COUNT : {mountainStacks}", AddMountain));
@@ -34,6 +36,7 @@ namespace UmbraMenu.Menus
                 spawnBlue = new Button(new NormalButton(this, 5, "SPAWN BLUE PORTAL", SpawnBluePortal));
                 spawnCele = new Button(new NormalButton(this, 6, "SPAWN CELESTAL PORTAL", SpawnCelestalPortal));
                 spawnGold = new Button(new NormalButton(this, 7, "SPAWN GOLD PORTAL", SpawnGoldPortal));
+                spawnHidden = new Button(new NormalButton(this, 8, "SPAWN HIDDEN REALM PORTAL", SpawnHiddenPortal));
 
                 AddButtons(new List<Button>()
                 {
@@ -43,7 +46,8 @@ namespace UmbraMenu.Menus
                     spawnAll,
                     spawnBlue,
                     spawnCele,
-                    spawnGold
+                    spawnGold,
+                    spawnHidden
                 });
                 SetActivatingButton(Utility.FindButtonById(0, 5));
                 SetPrevMenuId(0);
@@ -116,16 +120,24 @@ namespace UmbraMenu.Menus
                     TeleporterInteraction.instance.Network_shouldAttemptToSpawnMSPortal = true;
                     TeleporterInteraction.instance.shouldAttemptToSpawnMSPortal = true;
                 }
+                else if (portal.Equals("hidden")) // NEW
+                {
+                    Debug.Log("UmbraMenu : Spawned Hidden Realms Portal");
+                    TeleporterInteraction.instance.Network_shouldAttemptToSpawnHiddenRealmPortal = true;
+                    TeleporterInteraction.instance.shouldAttemptToSpawnHiddenRealmsPortal = true;
+                }
                 else if (portal.Equals("all"))
                 {
                     Debug.Log("UmbraMenu : Spawned All Portals");
                     TeleporterInteraction.instance.Network_shouldAttemptToSpawnGoldshoresPortal = true;
                     TeleporterInteraction.instance.Network_shouldAttemptToSpawnShopPortal = true;
                     TeleporterInteraction.instance.Network_shouldAttemptToSpawnMSPortal = true;
+                    TeleporterInteraction.instance.Network_shouldAttemptToSpawnHiddenRealmPortal = true;   // NEW
 
                     TeleporterInteraction.instance.shouldAttemptToSpawnGoldshoresPortal = true;
                     TeleporterInteraction.instance.shouldAttemptToSpawnShopPortal = true;
                     TeleporterInteraction.instance.shouldAttemptToSpawnMSPortal = true;
+                    TeleporterInteraction.instance.shouldAttemptToSpawnHiddenRealmsPortal = true;
                 }
             }
         }

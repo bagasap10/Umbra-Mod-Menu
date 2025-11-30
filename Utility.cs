@@ -166,8 +166,6 @@ namespace UmbraMenu
 
         public static List<ItemIndex> GetItems()
         {
-            List<ItemIndex> items = new List<ItemIndex>();
-
             List<ItemIndex> boss = new List<ItemIndex>();
             List<ItemIndex> tier3 = new List<ItemIndex>();
             List<ItemIndex> tier2 = new List<ItemIndex>();
@@ -176,51 +174,128 @@ namespace UmbraMenu
             List<ItemIndex> voidt = new List<ItemIndex>();
             List<ItemIndex> other = new List<ItemIndex>();
 
-            Color32 bossColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.BossItem);
-            Color32 tier3Color = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Tier3Item);
-            Color32 tier2Color = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Tier2Item);
-            Color32 tier1Color = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Tier1Item);
-            Color32 lunarColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.LunarItem);
-            Color32 voidColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.VoidItem);
-
             foreach (ItemIndex itemIndex in ItemCatalog.allItems)
             {
-                Color32 itemColor = ColorCatalog.GetColor(ItemCatalog.GetItemDef(itemIndex).colorIndex);
-                if (itemColor.Equals(bossColor)) // boss
+                ItemDef def = ItemCatalog.GetItemDef(itemIndex);
+                if (def == null)
+                    continue;
+
+                // Skip hidden, deprecated, or internal items
+                if (def.hidden)
+                    continue;
+                if (def.tier == ItemTier.NoTier)
+                    continue;
+
+                // Skip unlocalized tokens (ITEM_BOOSTDAMAGE_NAME, etc.)
+                string localized = Language.GetString(def.nameToken);
+                if (localized == def.nameToken)
+                    continue;
+
+                // Categorize
+                switch (def.tier)
                 {
-                    boss.Add(itemIndex);
-                }
-                else if (itemColor.Equals(tier3Color)) // tier 3
-                {
-                    tier3.Add(itemIndex);
-                }
-                else if (itemColor.Equals(tier2Color)) // tier 2
-                {
-                    tier2.Add(itemIndex);
-                }
-                else if (itemColor.Equals(tier1Color)) // tier 1
-                {
-                    tier1.Add(itemIndex);
-                }
-                else if (itemColor.Equals(lunarColor)) // lunar
-                {
-                    lunar.Add(itemIndex);
-                }
-                else if (itemColor.Equals(voidColor)) // Void
-                {
-                    voidt.Add(itemIndex);
-                }
-                else // Other
-                {
-                    other.Add(itemIndex);
+                    case ItemTier.Boss:
+                        boss.Add(itemIndex);
+                        break;
+                    case ItemTier.Tier3:
+                        tier3.Add(itemIndex);
+                        break;
+                    case ItemTier.Tier2:
+                        tier2.Add(itemIndex);
+                        break;
+                    case ItemTier.Tier1:
+                        tier1.Add(itemIndex);
+                        break;
+                    case ItemTier.Lunar:
+                        lunar.Add(itemIndex);
+                        break;
+                    case ItemTier.VoidTier1:
+                    case ItemTier.VoidTier2:
+                    case ItemTier.VoidTier3:
+                    case ItemTier.VoidBoss:
+                        voidt.Add(itemIndex);
+                        break;
+
+                    default:
+                        // Should rarely happen unless modded or weird DLC items
+                        other.Add(itemIndex);
+                        break;
                 }
             }
 
+            // Save for other parts of Umbra
             UmbraMenu.bossItems = boss;
             UmbraMenu.unreleasedItems = other;
-            var result = items.Concat(boss).Concat(tier3).Concat(tier2).Concat(tier1).Concat(lunar).Concat(voidt).Concat(other).ToList();
-            return result;
+
+            // Final ordering (same as Umbra originally intended)
+            return boss
+                .Concat(tier3)
+                .Concat(tier2)
+                .Concat(tier1)
+                .Concat(lunar)
+                .Concat(voidt)
+                .Concat(other)
+                .ToList();
         }
+
+        //Original
+        //public static List<ItemIndex> GetItems()
+        //{
+        //    List<ItemIndex> items = new List<ItemIndex>();
+
+        //    List<ItemIndex> boss = new List<ItemIndex>();
+        //    List<ItemIndex> tier3 = new List<ItemIndex>();
+        //    List<ItemIndex> tier2 = new List<ItemIndex>();
+        //    List<ItemIndex> tier1 = new List<ItemIndex>();
+        //    List<ItemIndex> lunar = new List<ItemIndex>();
+        //    List<ItemIndex> voidt = new List<ItemIndex>();
+        //    List<ItemIndex> other = new List<ItemIndex>();
+
+        //    Color32 bossColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.BossItem);
+        //    Color32 tier3Color = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Tier3Item);
+        //    Color32 tier2Color = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Tier2Item);
+        //    Color32 tier1Color = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Tier1Item);
+        //    Color32 lunarColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.LunarItem);
+        //    Color32 voidColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.VoidItem);
+
+        //    foreach (ItemIndex itemIndex in ItemCatalog.allItems)
+        //    {
+        //        Color32 itemColor = ColorCatalog.GetColor(ItemCatalog.GetItemDef(itemIndex).colorIndex);
+        //        if (itemColor.Equals(bossColor)) // boss
+        //        {
+        //            boss.Add(itemIndex);
+        //        }
+        //        else if (itemColor.Equals(tier3Color)) // tier 3
+        //        {
+        //            tier3.Add(itemIndex);
+        //        }
+        //        else if (itemColor.Equals(tier2Color)) // tier 2
+        //        {
+        //            tier2.Add(itemIndex);
+        //        }
+        //        else if (itemColor.Equals(tier1Color)) // tier 1
+        //        {
+        //            tier1.Add(itemIndex);
+        //        }
+        //        else if (itemColor.Equals(lunarColor)) // lunar
+        //        {
+        //            lunar.Add(itemIndex);
+        //        }
+        //        else if (itemColor.Equals(voidColor)) // Void
+        //        {
+        //            voidt.Add(itemIndex);
+        //        }
+        //        else // Other
+        //        {
+        //            other.Add(itemIndex);
+        //        }
+        //    }
+
+        //    UmbraMenu.bossItems = boss;
+        //    UmbraMenu.unreleasedItems = other;
+        //    var result = items.Concat(boss).Concat(tier3).Concat(tier2).Concat(tier1).Concat(lunar).Concat(voidt).Concat(other).ToList();
+        //    return result;
+        //}
 
         public static List<BuffDef> GetBuffs()
         {
