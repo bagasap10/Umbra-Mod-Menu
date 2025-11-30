@@ -79,6 +79,21 @@ namespace UmbraMenu.Menus
             purchaseInteractions = MonoBehaviour.FindObjectsOfType<PurchaseInteraction>().ToList();
             secretButtons = MonoBehaviour.FindObjectsOfType<PressurePlateController>().ToList();
             scrappers = MonoBehaviour.FindObjectsOfType<ScrapperController>().ToList();
+            
+            // Expand ONLY with guaranteed vanilla types
+            purchaseInteractions.AddRange(MonoBehaviour.FindObjectsOfType<ShopTerminalBehavior>()
+                .Select(s => s.GetComponent<PurchaseInteraction>())
+                .Where(pi => pi != null));
+
+            purchaseInteractions.AddRange(MonoBehaviour.FindObjectsOfType<ShrineHealingBehavior>()
+                .Select(s => s.GetComponent<PurchaseInteraction>())
+                .Where(pi => pi != null));
+
+            purchaseInteractions.AddRange(MonoBehaviour.FindObjectsOfType<ShrineRestackBehavior>()
+                .Select(s => s.GetComponent<PurchaseInteraction>())
+                .Where(pi => pi != null));
+
+            purchaseInteractions = purchaseInteractions.Distinct().ToList();
         }
         private void ToggleRenderInteractables()
         {
@@ -194,17 +209,70 @@ namespace UmbraMenu.Menus
                         string friendlyName = purchaseInteraction.GetDisplayName();
                         int cost = purchaseInteraction.cost;
 
+                        // Handle interactables with no cost
+                        bool noCost = purchaseInteraction.cost <= 0;
+
+                        // Special case: Void Cradle / Void Potential
+                        if (friendlyName.Contains("Void Cradle"))
+                        {
+                            dropName = "Random Void Item";
+                        }
+                        if (friendlyName.Contains("Void Potential"))
+                        {
+                            dropName = "Choose 1 of 3 Void Items";
+                        }
+
+                        // Cauldrons (Item exchange) 
+                        if (friendlyName.Contains("Cauldron"))
+                        {
+                            dropName = "Item Conversion";
+                        }
+
+                        // Timed Security Chest
+                        if (friendlyName.Contains("Timed"))
+                        {
+                            dropName = "Requires Time Lock";
+                        }
+
+                        // Drone Combiner
+                        if (friendlyName.Contains("Combiner"))
+                        {
+                            dropName = "Combine 2 Drones";
+                        }
+
+                        // Drone Scrapper
+                        if (friendlyName.Contains("Drone Scrapper"))
+                        {
+                            dropName = "Convert Drone → Scrap";
+                        }
+
+                        //string boxText;
+                        //if (friendlyName.Contains("Mountain") || friendlyName.Contains("Combat") || friendlyName.Contains("Printer"))
+                        //{
+                        //    boxText = $"{friendlyName}\n{distance}m";
+                        //}
+                        //else
+                        //{
+                        //    boxText = dropName != null 
+                        //        ? $"{friendlyName}\n{BuyingUnit(friendlyName, cost)}\n{distance}m\n{dropName}" 
+                        //        : $"{friendlyName}\n{BuyingUnit(friendlyName, cost)}\n{distance}m";
+                        //}
+
                         string boxText;
-                        if (friendlyName.Contains("Mountain") || friendlyName.Contains("Combat") || friendlyName.Contains("Printer"))
+
+                        if (dropName != null)
+                        {
+                            boxText = $"{friendlyName}\n{BuyingUnit(friendlyName, cost)}\n{distance}m\n{dropName}";
+                        }
+                        else if (noCost)
                         {
                             boxText = $"{friendlyName}\n{distance}m";
                         }
                         else
                         {
-                            boxText = dropName != null 
-                                ? $"{friendlyName}\n{BuyingUnit(friendlyName, cost)}\n{distance}m\n{dropName}" 
-                                : $"{friendlyName}\n{BuyingUnit(friendlyName, cost)}\n{distance}m";
+                            boxText = $"{friendlyName}\n{BuyingUnit(friendlyName, cost)}\n{distance}m";
                         }
+
                         monsoon.Renderer.DrawString(new Vector2(BoundingVector.x, (float)Screen.height - BoundingVector.y),
                             boxText, ChooseStyle(friendlyName));
                     }
@@ -277,36 +345,162 @@ namespace UmbraMenu.Menus
             }
         }
 
+        //private static string BuyingUnit(string name, int cost)
+        //{
+        //    if (name.Contains("Newt") || name.Contains("Lunar") || name.Contains("Order") || name.Contains("Slab"))
+        //        return cost + "LC";
+        //    else if (name.Contains("Void") || name.Contains("Blood"))
+        //        return cost + "%HP";
+        //    return "$" + cost;
+        //}
+
         private static string BuyingUnit(string name, int cost)
         {
-            if (name.Contains("Newt") || name.Contains("Lunar") || name.Contains("Order") || name.Contains("Slab"))
-                return cost + "LC";
-            else if (name.Contains("Void") || name.Contains("Blood"))
-                return cost + "%HP";
-            return "$" + cost;
+            if (cost <= 0) return "-";
+
+            if (name.Contains("Lunar") ||
+                name.Contains("Newt") ||
+                name.Contains("Order") ||
+                name.Contains("Cleansing"))
+                return $"{cost} LC";
+
+            if (name.Contains("Void Cradle") ||
+                name.Contains("Void Potential") ||
+                name.Contains("Blood"))
+                return $"{cost}% HP";
+
+            if (name.Contains("Rusted") || name.Contains("Lockbox"))
+                return "Rusted Key";
+
+            if (name.Contains("Encrusted"))
+                return "Encrusted Key";
+
+            if (name.Contains("Fuel Array"))
+                return "Fuel Array";
+
+            if (name.Contains("Max HP"))
+                return $"{cost}% HP";
+
+            return $"${cost}";
         }
+
+        private static bool IsVoidInteractable(string name)
+        {
+            return name.Contains("Void") ||
+                   name.Contains("Cradle") ||
+                   name.Contains("Potential") ||
+                   name.Contains("Deep Void") ||
+                   name.Contains("Cell Vent") ||
+                   name.Contains("Assessment Focus");
+        }
+
+        private static bool IsPrinter(string name)
+        {
+            return name.Contains("Printer") ||
+                   name.Contains("3D") ||
+                   name.Contains("Overgrown") ||
+                   name.Contains("Mili-Tech");
+        }
+
+        private static bool IsDrone(string name)
+        {
+            return name.Contains("Drone") ||
+                   name.Contains("Turret") ||
+                   name.Contains("TC-280") ||
+                   name.Contains("Vulture Nest") ||
+                   name.Contains("Jailer");
+        }
+
+        private static bool IsShrine(string name)
+        {
+            return name.Contains("Shrine") ||
+                   name.Contains("Cleansing Pool") ||
+                   name.Contains("Altar") ||
+                   name.Contains("Beacon") ||
+                   name.Contains("Halcyon Shrine");
+        }
+
+        private static bool IsPortal(string name)
+        {
+            return name.Contains("Portal") ||
+                   name.Contains("Seer") ||
+                   name.Contains("Quantum Tunnel") ||
+                   name.Contains("Gateway");
+        }
+
+        private static bool IsEnvironment(string name)
+        {
+            return name.Contains("Access Node") ||
+                   name.Contains("Pressure Plate") ||
+                   name.Contains("Fan") ||
+                   name.Contains("Cauldron") ||
+                   name.Contains("Lunar Bud") ||
+                   name.Contains("Generator") ||
+                   name.Contains("Aurelionite") ||
+                   name.Contains("Stalk") ||
+                   name.Contains("Timed Security");
+        }
+
+        //private static GUIStyle ChooseStyle(string name)
+        //{
+        //    if (name.Contains("Newt"))
+        //        return Styles.NewtStyle;
+        //    else if (name.Contains("Chest") || name.Contains("Multishop") || name.Contains("Printer"))
+        //        return Styles.ChestStyle;
+        //    else if (name.Contains("Equipment"))
+        //        return Styles.EquipmentStyle;
+        //    else if (name.Contains("Lunar"))
+        //        return Styles.LunarStyle;
+        //    else if (name.Contains("Void"))
+        //        return Styles.VoidStyle;
+        //    else if (name.Contains("Gold") || name.Contains("Chance"))
+        //        return Styles.ChanceStyle;
+        //    else if (name.Contains("Blood"))
+        //        return Styles.BloodStyle;
+        //    else if (name.Contains("Combat") || name.Contains("Order"))
+        //        return Styles.CombatStyle;
+        //    else if (name.Contains("Mountain"))
+        //        return Styles.MountainStyle;
+        //    else if (name.Contains("Woods"))
+        //        return Styles.WoodsStyle;
+        //    return Styles.DefaultStyle;
+        //}
+
         private static GUIStyle ChooseStyle(string name)
         {
-            if (name.Contains("Newt"))
-                return Styles.NewtStyle;
-            else if (name.Contains("Chest") || name.Contains("Multishop") || name.Contains("Printer"))
-                return Styles.ChestStyle;
-            else if (name.Contains("Equipment"))
-                return Styles.EquipmentStyle;
-            else if (name.Contains("Lunar"))
-                return Styles.LunarStyle;
-            else if (name.Contains("Void"))
+            if (IsPortal(name))
+                return Styles.PortalStyle;
+
+            if (IsShrine(name))
+                return Styles.ShrineStyle;
+
+            if (IsVoidInteractable(name))
                 return Styles.VoidStyle;
-            else if (name.Contains("Gold") || name.Contains("Chance"))
+
+            if (IsPrinter(name))
+                return Styles.PrinterStyle;
+
+            if (IsDrone(name))
+                return Styles.DroneStyle;
+
+            if (IsEnvironment(name))
+                return Styles.EnvironmentStyle;
+
+            if (name.Contains("Chest") ||
+                name.Contains("Lockbox") ||
+                name.Contains("Cache") ||
+                name.Contains("Terminal"))
+                return Styles.ChestStyle;
+
+            if (name.Contains("Equipment"))
+                return Styles.EquipmentStyle;
+
+            if (name.Contains("Lunar"))
+                return Styles.LunarStyle;
+
+            if (name.Contains("Chance"))
                 return Styles.ChanceStyle;
-            else if (name.Contains("Blood"))
-                return Styles.BloodStyle;
-            else if (name.Contains("Combat") || name.Contains("Order"))
-                return Styles.CombatStyle;
-            else if (name.Contains("Mountain"))
-                return Styles.MountainStyle;
-            else if (name.Contains("Woods"))
-                return Styles.WoodsStyle;
+
             return Styles.DefaultStyle;
         }
 

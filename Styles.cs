@@ -399,6 +399,13 @@ namespace UmbraMenu
                 return teleporterStyle;
             }
         }
+
+        public static GUIStyle PortalStyle = ChestStyle;
+        public static GUIStyle ShrineStyle = ChanceStyle;
+        public static GUIStyle DroneStyle = EquipmentStyle;
+        public static GUIStyle PrinterStyle = ChestStyle;
+        public static GUIStyle EnvironmentStyle = DefaultStyle;
+
         #endregion
     }
 }
