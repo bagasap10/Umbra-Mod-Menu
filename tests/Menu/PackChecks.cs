@@ -16,14 +16,14 @@ partial class Checks
         "Free Red|RegeneratingScrap:5|",
         "Katyusha|Missile:1,AutoCastEquipment:5,EquipmentMagazine:5,MoreMissile:1|CommandMissile",
         "Zeus|AutoCastEquipment:5,EquipmentMagazine:5|Lightning",
-        "Masochist|Thorns:10,ArmorReductionOnHit:5,ParentEgg:1|BurnNearby",
+        "Masochist|Thorns:10,ArmorPlate:5,ParentEgg:1|BurnNearby",
         "Drug Addict|AutoCastEquipment:5|Tonic",
-        "Bungus|Mushroom:5,Bear:1,Syringe:1,BarrierOnOverHeal:1,Seed:1,BleedOnHit:1,ArmorReductionOnHit:1|",
+        "Bungus|Mushroom:5,Bear:1,Syringe:1,BarrierOnOverHeal:1,Seed:1,BleedOnHit:1,ArmorPlate:1|",
         "1 Health Shrimp|MissileVoid:1,ShieldOnly:1,MoreMissile:1|",
         "Arsonist|IgniteOnKill:10,StrengthenBurn:1|",
         "DMG Stack|AutoCastEquipment:1,EquipmentMagazine:1,IncreaseDamageOnMultiKill:5,Talisman:1|DeathProjectile",
         "Primary Heresy|Clover:1,LunarBadLuck:1,LunarPrimaryReplacement:1|",
-        "Seeker's Flying Object|ParentEgg:1,ArmorReductionOnHit:1,Bear:1,Thorns:1|",
+        "Seeker's Flying Object|ParentEgg:1,ArmorPlate:1,Bear:1,Thorns:1|",
         "Remote Katyusha|Firework:1,MoreMissile:1,Squid:1,Missile:1|VendingMachine",
         "Special Forces|AutoCastEquipment:5|GummyClone",
         "Shield Tank|ShieldOnly:1,DelayedDamage:5,OutOfCombatArmor:5|",
@@ -37,7 +37,7 @@ partial class Checks
     static void PackChecks()
     {
         Root.InGame=true;Root.characterCollected=true;
-        string[] common={"AttackSpeedAndMoveSpeed","CritGlasses","ArmorReductionOnHit","Mushroom","Bear","Syringe","IgniteOnKill","IncreaseDamageOnMultiKill","Firework","DelayedDamage","OutOfCombatArmor","ScrapWhite","FlatHealth","BleedOnHit"};
+        string[] common={"AttackSpeedAndMoveSpeed","CritGlasses","ArmorPlate","Mushroom","Bear","Syringe","IgniteOnKill","IncreaseDamageOnMultiKill","Firework","DelayedDamage","OutOfCombatArmor","ScrapWhite","FlatHealth","BleedOnHit"};
         string[] red={"MoreMissile","BarrierOnOverHeal","Talisman","Clover","AlienHead"},lunar={"AutoCastEquipment","ShieldOnly","LunarBadLuck","LunarPrimaryReplacement"},boss={"ParentEgg","FireballsOnHit","LightningStrikeOnHit"};
         int next=10000;
         foreach(string name in PackSpecs.SelectMany(spec=>spec.Split('|')[1].Split(',')).Select(value=>value.Split(':')[0]).Distinct())
@@ -64,6 +64,7 @@ partial class Checks
             if(parts[2]!="")Assert(inventory.LastLocation.slot==1&&inventory.LastLocation.set==0,"Equipment must go in the player's active equipment slot");
             ItemPacks.Give(pack,out _);foreach(var entry in expected)Assert(inventory.GetItemCountPermanent(entry.Key)==entry.Value*2,"A second click must add a second complete pack");
         }
+        ArmorPlatePackChecks();
         var ordered=ItemPacks.Sorted().ToArray();
         Assert(ordered.Take(16).All(pack=>!pack.IsChefRecipe)&&ordered.Skip(16).All(pack=>pack.IsChefRecipe),"CHEF recipes must remain together after the general packs");
         foreach(var group in ordered.GroupBy(pack=>pack.IsChefRecipe))
@@ -77,6 +78,28 @@ partial class Checks
         Root.InGame=false;Assert(!ItemPacks.Give(ItemPacks.All[0],out _)&&Root.LocalPlayerInv.Counts.Count==0,"Packs must not mutate cached inventory outside a run");Root.InGame=true;Root.LocalPlayerInv=null;Assert(!ItemPacks.Give(ItemPacks.All[0],out _),"Missing inventories must be safe");
         IconChecks();MenuOrderChecks();StabilityChecks();
         Console.WriteLine("PASS: "+assertions+" total catalog, pack, icon, menu, portal and ESP assertions.");
+    }
+    static void ArmorPlatePackChecks()
+    {
+        // IDs and tokens verified against the installed game's item assets and English language data.
+        var plateIndex=ItemCatalog.FindItemIndex("ArmorPlate");
+        var plateDef=ItemCatalog.Defs[plateIndex];plateDef.nameToken="ITEM_REPULSIONARMORPLATE_NAME";
+        Language.Names[plateDef.nameToken]="Repulsion Armor Plate";
+        var justiceIndex=(ItemIndex)19000;
+        var justiceDef=new ItemDef{name="ArmorReductionOnHit",nameToken="ITEM_ARMORREDUCTIONONHIT_NAME",tier=ItemTier.Tier3,Icon=new Sprite{texture=new Texture2D(64,64)}};
+        ItemCatalog.Defs[justiceIndex]=justiceDef;Language.Names[justiceDef.nameToken]="Shattering Justice";
+        var quantities=new Dictionary<string,int>{{"Bungus",1},{"Seeker's Flying Object",1},{"Masochist",5}};
+        foreach(var expected in quantities)
+        {
+            var pack=ItemPacks.All.Single(value=>value.Name==expected.Key);
+            Assert(ItemPacks.TryResolve(pack,out var contents,out _),"Armor plate packs must resolve with both real item IDs present");
+            var plate=contents.SingleOrDefault(value=>value.Item==plateIndex);
+            Assert(plate!=null&&plate.Name=="Repulsion Armor Plate"&&plate.Source.Quantity==expected.Value,"The pack must resolve the real armor plate with its unchanged quantity");
+            Assert(contents.All(value=>value.Item!=justiceIndex),"Armor plate packs must never resolve Shattering Justice");
+            Root.LocalPlayerInv=new Inventory();Root.LocalPlayerInv.Counts[plateIndex]=4;Root.LocalPlayerInv.Counts[justiceIndex]=2;
+            Assert(ItemPacks.Give(pack,out _)&&Root.LocalPlayerInv.GetItemCountPermanent(plateIndex)==4+expected.Value&&Root.LocalPlayerInv.GetItemCountPermanent(justiceIndex)==2,"Grant the requested plates while preserving existing Shattering Justice stacks");
+            Assert(plate.Icon()==plateDef.Icon&&plate.Icon()!=justiceDef.Icon,"The preview must use the armor plate's exact icon");
+        }
     }
     static void IconChecks()
     {
