@@ -1,0 +1,21 @@
+RoR2/Base/PortalShop/PortalShop.prefab
+RoR2/Base/PortalMS/PortalMS.prefab
+RoR2/Base/PortalGoldshores/PortalGoldshores.prefab
+RoR2/Base/PortalArtifactworld/PortalArtifactworld.prefab
+RoR2/Base/PortalArena/PortalArena.prefab
+RoR2/DLC1/PortalVoid/PortalVoid.prefab
+RoR2/DLC1/DeepVoidPortal/DeepVoidPortal.prefab
+RoR2/DLC1/GameModes/InfiniteTowerRun/PortalInfiniteTower.prefab
+RoR2/DLC1/VoidOutroPortal/VoidOutroPortal.prefab
+RoR2/DLC2/PortalColossus.prefab
+RoR2/DLC2/PM DestinationPortal.prefab
+RoR2/DLC3/CompExchangePortal.prefab
+RoR2/DLC3/HardwareProgPortal.prefab
+RoR2/DLC3/SolusWebPortal.prefab
+RoR2/DLC3/EyePortal/EyePortal.prefab
+RoR2/DLC3/SolutionalHauntPortal.prefab
+RoR2/DLC4/TrialPortalEntry.prefab
+RoR2/DLC4/TrialPortalExit.prefab
+RoR2/DLC4/ChampRushPortal.prefab
+RoR2/DLC4/ChampRushExitPortal.prefab
+RoR2/DLC4/champrush/PortalToUltima.prefab

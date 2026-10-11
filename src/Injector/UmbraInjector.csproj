@@ -1,0 +1,20 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <ProjectGuid>{F8C79243-D921-4A48-AE88-4172A29BFB04}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>UmbraInjector</AssemblyName>
+    <RootNamespace>UmbraSuite.Injector</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Compile Include="..\Shared\SessionProtocol.cs"><Link>SessionProtocol.cs</Link></Compile>
+    <Reference Include="System" /><Reference Include="System.Core" /><Reference Include="System.Drawing" /><Reference Include="System.Windows.Forms" /><Reference Include="System.Xml" />
+    <ProjectReference Include="..\..\vendor\SharpMonoInjector\SharpMonoInjector.csproj">
+      <Project>{864AD81C-FA64-4B79-A34E-3AFD6B8B1E81}</Project><Name>SharpMonoInjector</Name>
+    </ProjectReference>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

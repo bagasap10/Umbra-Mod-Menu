@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UmbraMenu", "src\Menu\UmbraMenu.csproj", "{BE65C270-02AD-4C12-900E-28B393E956EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UmbraInjector", "src\Injector\UmbraInjector.csproj", "{F8C79243-D921-4A48-AE88-4172A29BFB04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMonoInjector", "vendor\SharpMonoInjector\SharpMonoInjector.csproj", "{864AD81C-FA64-4B79-A34E-3AFD6B8B1E81}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Release|x64 = Release|x64
+        Debug|x64 = Debug|x64
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {BE65C270-02AD-4C12-900E-28B393E956EA}.Release|x64.ActiveCfg = Release|x64
+        {BE65C270-02AD-4C12-900E-28B393E956EA}.Release|x64.Build.0 = Release|x64
+        {F8C79243-D921-4A48-AE88-4172A29BFB04}.Release|x64.ActiveCfg = Release|x64
+        {F8C79243-D921-4A48-AE88-4172A29BFB04}.Release|x64.Build.0 = Release|x64
+        {864AD81C-FA64-4B79-A34E-3AFD6B8B1E81}.Release|x64.ActiveCfg = Release|x64
+        {864AD81C-FA64-4B79-A34E-3AFD6B8B1E81}.Release|x64.Build.0 = Release|x64
+        {BE65C270-02AD-4C12-900E-28B393E956EA}.Debug|x64.ActiveCfg = Debug|x64
+        {BE65C270-02AD-4C12-900E-28B393E956EA}.Debug|x64.Build.0 = Debug|x64
+        {F8C79243-D921-4A48-AE88-4172A29BFB04}.Debug|x64.ActiveCfg = Debug|x64
+        {F8C79243-D921-4A48-AE88-4172A29BFB04}.Debug|x64.Build.0 = Debug|x64
+        {864AD81C-FA64-4B79-A34E-3AFD6B8B1E81}.Debug|x64.ActiveCfg = Debug|x64
+        {864AD81C-FA64-4B79-A34E-3AFD6B8B1E81}.Debug|x64.Build.0 = Debug|x64
+    EndGlobalSection
+EndGlobal

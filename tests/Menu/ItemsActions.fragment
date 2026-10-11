@@ -1,0 +1,7 @@
+        public static readonly List<ItemIndex> Dropped=new List<ItemIndex>();public static int BulkCalls;
+public void GiveAllItems(){BulkCalls++;}public void GiveAllNonLunarVoidItems(){BulkCalls++;}public void RollItems(){BulkCalls++;}public void StackInventory(){BulkCalls++;}public void ClearInventory(){BulkCalls++;}
+public void IncreaseGiveAllQuantity(){AllItemsQuantity++;}public void DecreaseGiveAllQuantity(){AllItemsQuantity--;}
+public void IncreaseItemsToRoll(){ItemsToRoll++;}public void DecreaseItemsToRoll(){ItemsToRoll--;}
+public static void DropItemMethod(ItemIndex index){Dropped.Add(index);}public static void DropEquipmentMethod(EquipmentIndex index){}
+public static bool TryGive(ItemIndex index,int quantity){if(!InventorySafety.CanAdd(UmbraMenu.LocalPlayerInv.GetItemCountPermanent(index),quantity))return false;UmbraMenu.LocalPlayerInv.GiveItemPermanent(index,quantity);return true;}public static List<ItemIndex> CurrentInventory(){return UmbraMenu.LocalPlayerInv.Counts.Where(pair=>pair.Value>0).Select(pair=>pair.Key).ToList();}
+public static WeightedSelection<List<ItemIndex>> BuildRollItemsDropTable()=>new WeightedSelection<List<ItemIndex>>();}}
