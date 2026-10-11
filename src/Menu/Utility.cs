@@ -425,6 +425,7 @@ namespace UmbraMenu
             UmbraMenu.inventoryItemListMenu = new Menus.InventoryItemList();
             UmbraMenu.itemPackListMenu = new Menus.ItemPackList();
             UmbraMenu.itemPackDetailsMenu = new Menus.ItemPackDetails();
+            UmbraMenu.worldCheatsMenu = new Menus.WorldCheatsMenu();
 
             UmbraMenu.menus = new List<Menu>()
             {
@@ -447,7 +448,8 @@ namespace UmbraMenu
                 UmbraMenu.keybindListMenu, //16
                 UmbraMenu.inventoryItemListMenu, //17
                 UmbraMenu.itemPackListMenu, //18
-                UmbraMenu.itemPackDetailsMenu //19
+                UmbraMenu.itemPackDetailsMenu, //19
+                UmbraMenu.worldCheatsMenu //20
             };
             if (preserveState)
             {

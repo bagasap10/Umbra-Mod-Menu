@@ -46,13 +46,13 @@ namespace RoR2
         }
         public static PickupDef GetPickupDef(PickupIndex index) => Defs.TryGetValue(index, out var def) ? def : null;
     }
-    public class ChestBehavior : MonoBehaviour
+    public partial class ChestBehavior : MonoBehaviour
     {
         // Read-only auto-property, as in the game: tests exercise the production reflection helper.
         public UniquePickup currentPickup { get; } = new UniquePickup(PickupIndex.none);
         public ChestBehavior(PickupIndex index) { currentPickup = new UniquePickup(index); }
     }
-    public class SceneDirector
+    public partial class SceneDirector : MonoBehaviour
     {
         public static event Action<SceneDirector> onPostPopulateSceneServer;
         public static int Subscribers => onPostPopulateSceneServer?.GetInvocationList().Length ?? 0;

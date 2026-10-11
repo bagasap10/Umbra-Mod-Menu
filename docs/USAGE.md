@@ -16,6 +16,8 @@ Change Chest Item locks the nearest unopened chest when the page opens. Its list
 
 The Teleporter / Portals page includes embedded wiki thumbnails. A neutral ? icon marks a portal whose photograph is unavailable; its spawn action still works. Images work offline and need no additional image files. Image sources are listed in THIRD_PARTY_NOTICES.md.
 
+Open **Spawn → World Cheats** for Stage Abundance, Chest Paradise, Free Shopping, Loot Multiplier, Rarity Control, Proc Chaos and Freeze Enemies. These controls require the host of an active run. Stage generation controls apply to future stages; the other controls apply during the run. Leaving the page keeps cheats enabled. Use **Turn Off All World Cheats** to release the effects; ending a run also resets them. Extra chests and loot already collected remain in the game.
+
 ## Troubleshooting
 
 | Status | Action |

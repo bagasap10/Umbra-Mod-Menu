@@ -8,7 +8,7 @@ namespace UmbraMenu
     // One window owns all coordinates, page selection and scrolling.
     internal static class MenuUI
     {
-        private static readonly string[] names = { "Overview", "Player", "Movement", "Items", "Spawn", "Teleporter", "Visuals", "Settings", "Modify stats", "Live stats", "Characters", "Buffs", "Spawn items", "Spawn equipment", "Chest items", "Spawn catalog", "Keybinds", "Remove items", "Item packs", "Pack details" };
+        private static readonly string[] names = { "Overview", "Player", "Movement", "Items", "Spawn", "Teleporter", "Visuals", "Settings", "Modify stats", "Live stats", "Characters", "Buffs", "Spawn items", "Spawn equipment", "Chest items", "Spawn catalog", "Keybinds", "Remove items", "Item packs", "Pack details", "World cheats" };
         private static readonly string[] descriptions = {
             "Your tools, in one place.", "Resources, abilities and character tools.", "Move through the world your way.",
             "Manage your inventory and equipment.", "Create enemies and interactables.", "Stage controls and portals, grouped by expansion.",
@@ -18,7 +18,7 @@ namespace UmbraMenu
             "Equipment, grouped by type and expansion.", "Choose an item for the nearest chest.",
             "Select an entry to spawn it.", "Select a binding, then press a key to replace it.",
             "Your current inventory. Each click removes one stack.",
-            "General packs and CHEF recipes, sorted by value.", "Review the contents, then give the complete pack." };
+            "General packs and CHEF recipes, sorted by value.", "Review the contents, then give the complete pack.", "Host controls for stage loot, shopping and combat." };
 
         private static Rect window;
         private static Rect body;

@@ -52,7 +52,9 @@ Menu startup waits for catalog availability and creates Unity objects on the gam
 
 The native backend releases reserved pages with `MEM_RELEASE`, closes thread/process handles on failure, bounds memory reads and allocations, terminates UTF-8 strings correctly, reads 64-bit exception pointers correctly, and uses a finite remote-thread wait. On an uncertain timeout it intentionally preserves potentially executing pages until the game exits.
 
-All existing rarity/DLC sections, catalog icons, item/removal/equipment/chest search, item packs, portals, ESP and resize/back-key features are retained. See [item packs](docs/item-packs.md), [portal images](docs/portal-icons.md), and [architecture and validation](docs/ARCHITECTURE.md).
+All existing rarity/DLC sections, catalog icons, item/removal/equipment/chest search, item packs, portals, ESP and resize/back-key features are retained. The **Spawn → World Cheats** submenu adds stage/chest abundance, money-only free shopping, chest multi-drops and rarity selection, bounded proc luck and hostile freezing. See [World Cheats](docs/world-cheats.md) for controls and limits.
+
+See [item packs](docs/item-packs.md), [portal images](docs/portal-icons.md), and [architecture and validation](docs/ARCHITECTURE.md).
 
 Automated checks do not inject a running game. Native injection and gameplay must still be tested in-game; these changes reduce identified risks and cannot guarantee a crash-free game session.
 

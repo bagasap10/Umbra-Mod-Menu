@@ -93,7 +93,7 @@ namespace RoR2
     public interface IDisplayNameProvider { string GetDisplayName(); }
     public class Interactor : MonoBehaviour {}
     public class GenericPickupController : TestInteraction {}
-    public class PurchaseInteraction : TestInteraction { public bool available=true; }
+    public partial class PurchaseInteraction : TestInteraction { public bool available=true; }
     public class BarrelInteraction : TestInteraction {}
     public class ScrapperController : MonoBehaviour {}
     public class PressurePlateController : MonoBehaviour {}
@@ -104,7 +104,7 @@ namespace RoR2
     {
         public static TeleporterInteraction instance; public HoldoutZoneController holdoutZoneController=new HoldoutZoneController(); public bool shouldAttemptToSpawnShopPortal,Network_shouldAttemptToSpawnShopPortal,shouldAttemptToSpawnGoldshoresPortal,Network_shouldAttemptToSpawnGoldshoresPortal,shouldAttemptToSpawnMSPortal,Network_shouldAttemptToSpawnMSPortal; public int shrineBonusStacks; public void AddShrineStack() { shrineBonusStacks++; }
     }
-    public class Run : MonoBehaviour { public static Run instance; public object nextStageScene; public void AdvanceStage(object scene) {} }
+    public partial class Run : MonoBehaviour { public static Run instance; public object nextStageScene; public void AdvanceStage(object scene) {} }
 }
 partial class Checks
 {

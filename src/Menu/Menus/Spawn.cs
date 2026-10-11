@@ -80,7 +80,9 @@ namespace UmbraMenu.Menus
                     changeTeamIndex,
                     toggleSpawnListMenu,
                     killAll,
-                    destroyInteractables
+                    destroyInteractables,
+                    new Button(new DividerButton(this, 7, "", new Color32(113, 226, 207, 255), false)),
+                    new Button(new TogglableButton(this, WorldCheatsMenu.SpawnButtonId, "WORLD CHEATS : OFF", "WORLD CHEATS : ON", ToggleWorldCheats, ToggleWorldCheats))
                 });
                 SetActivatingButton(Utility.FindButtonById(0, 4));
                 SetPrevMenuId(0);
@@ -104,6 +106,7 @@ namespace UmbraMenu.Menus
             base.Reset();
         }
 
+        private static void ToggleWorldCheats() => UmbraMenu.menus[WorldCheatsMenu.MenuId].ToggleMenu();
         private void ToggleSpawnListMenu() => UmbraMenu.menus[15].ToggleMenu();
 
         public static void SpawnMob(GUIStyle buttonStyle, string buttonId)

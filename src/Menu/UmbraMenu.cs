@@ -142,6 +142,8 @@ namespace UmbraMenu
         public static Menus.ItemPackList itemPackListMenu = new Menus.ItemPackList();
         public static Menus.ItemPackDetails itemPackDetailsMenu = new Menus.ItemPackDetails();
 
+        public static Menus.WorldCheatsMenu worldCheatsMenu = new Menus.WorldCheatsMenu();
+
         public static List<Menu> menus = new List<Menu>()
         {
             mainMenu, //0
@@ -163,7 +165,8 @@ namespace UmbraMenu
             keybindListMenu, //16
             inventoryItemListMenu, //17
             itemPackListMenu, //18
-            itemPackDetailsMenu //19
+            itemPackDetailsMenu, //19
+            worldCheatsMenu //20
         };
         #endregion
 
@@ -197,6 +200,7 @@ namespace UmbraMenu
             CleanUp(Menus.Render.DisableInteractables);
             CleanUp(Menus.SpawnList.DisableSpawnList);
             CleanUp(Menus.ChestItemList.DisableChests);
+            CleanUp(WorldCheats.Shutdown);
             Menus.Spawn.spawnedObjects.Clear();
             CleanUp(Menus.Teleporter.ReleaseAssets);
             CleanUp(CatalogIcons.Release);
@@ -219,6 +223,7 @@ namespace UmbraMenu
                 currentScene = SceneManager.GetActiveScene();
                 GetCharacter();
                 Utility.SoftResetMenu(false);
+                WorldCheats.Initialize();
                 routines = new[]
                 {
                     new SafeRoutine("Player lookup", CharacterRoutine),
@@ -233,6 +238,7 @@ namespace UmbraMenu
                     new SafeRoutine("Flight", FlightRoutine),
                     new SafeRoutine("Sprint", SprintRoutine),
                     new SafeRoutine("Jump pack", JumpPackRoutine),
+                    new SafeRoutine("World cheats", WorldCheats.Tick),
                     new SafeRoutine("Inventory refresh", () => inventoryItemListMenu.RefreshInventory()),
                     new SafeRoutine("Interactables refresh", Menus.Render.RefreshInteractablesIfNeeded),
                     new SafeRoutine("Navigation", UpdateNavIndexRoutine),
@@ -302,6 +308,7 @@ namespace UmbraMenu
 
         private void ResetForScene(Scene s1, Scene s2)
         {
+            WorldCheats.ResetStage();
             ClearCharacterReferences();
             Menus.Render.enemyBodies.Clear();
             Menus.Spawn.spawnedObjects.Clear();
