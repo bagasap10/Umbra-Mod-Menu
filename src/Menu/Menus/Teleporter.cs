@@ -35,9 +35,9 @@ namespace UmbraMenu.Menus
             {
                 skipStage = new Button(new NormalButton(this, 1, "SKIP STAGE", SkipStage));
                 instaTele = new Button(new NormalButton(this, 2, "INSTA TELE/PURPLE CHARGE", InstaTeleporter));
-                addMountain = new Button(new NormalButton(this, 3, $"ADD MOUNTAIN-COUNT : {mountainStacks}", AddMountain));
-                spawnAll = new Button(new NormalButton(this, 4, "SPAWN ALL PORTALS", () => SpawnPortals("all")));
-                List<Button> buttons = new List<Button> { skipStage, instaTele, addMountain, spawnAll };
+                addMountain = new Button(new NormalButton(this, 2, $"ADD MOUNTAIN-COUNT : {mountainStacks}", AddMountain));
+                spawnAll = new Button(new NormalButton(this, 3, "SPAWN ALL PORTALS", () => SpawnPortals("all")));
+                List<Button> buttons = new List<Button> { skipStage, addMountain, spawnAll };
                 PortalCatalog.AddButtons(this, buttons, SpawnPortals);
                 AddButtons(buttons);
                 SetActivatingButton(Utility.FindButtonById(0, 5));
@@ -64,7 +64,7 @@ namespace UmbraMenu.Menus
         {
             if (TeleporterInteraction.instance)
             {
-                TeleporterInteraction.instance.holdoutZoneController.baseChargeDuration = 1;
+                PlayerCheats.InstantCharge(TeleporterInteraction.instance.holdoutZoneController);
             }
             else
             {
@@ -72,7 +72,7 @@ namespace UmbraMenu.Menus
                 {
                     HoldoutZoneController zone = interaction.GetComponent<HoldoutZoneController>();
                     if (zone)
-                        zone.baseChargeDuration = 1;
+                        PlayerCheats.InstantCharge(zone);
                 }
             }
         }

@@ -371,6 +371,7 @@ namespace UmbraMenu
         #region Menu Resets
         public static void ResetMenu()
         {
+            Menus.CheatsMenu.StopAll();
             for (int i = 0; i < UmbraMenu.menus.Count; i++)
             {
                 Menu currentMenu = UmbraMenu.menus[i];
@@ -425,7 +426,7 @@ namespace UmbraMenu
             UmbraMenu.inventoryItemListMenu = new Menus.InventoryItemList();
             UmbraMenu.itemPackListMenu = new Menus.ItemPackList();
             UmbraMenu.itemPackDetailsMenu = new Menus.ItemPackDetails();
-            UmbraMenu.worldCheatsMenu = new Menus.WorldCheatsMenu();
+            UmbraMenu.cheatsMenu = new Menus.CheatsMenu();
 
             UmbraMenu.menus = new List<Menu>()
             {
@@ -449,7 +450,7 @@ namespace UmbraMenu
                 UmbraMenu.inventoryItemListMenu, //17
                 UmbraMenu.itemPackListMenu, //18
                 UmbraMenu.itemPackDetailsMenu, //19
-                UmbraMenu.worldCheatsMenu //20
+                UmbraMenu.cheatsMenu //20
             };
             if (preserveState)
             {

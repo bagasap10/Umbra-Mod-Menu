@@ -12,7 +12,7 @@ namespace UmbraMenu
     {
         public const string
             NAME = "U M B R A",
-            VERSION = "4.0.1",
+            VERSION = "4.1.1",
             DLC_NAME = "Hallowed Concepts";
 
 
@@ -142,7 +142,7 @@ namespace UmbraMenu
         public static Menus.ItemPackList itemPackListMenu = new Menus.ItemPackList();
         public static Menus.ItemPackDetails itemPackDetailsMenu = new Menus.ItemPackDetails();
 
-        public static Menus.WorldCheatsMenu worldCheatsMenu = new Menus.WorldCheatsMenu();
+        public static Menus.CheatsMenu cheatsMenu = new Menus.CheatsMenu();
 
         public static List<Menu> menus = new List<Menu>()
         {
@@ -166,7 +166,7 @@ namespace UmbraMenu
             inventoryItemListMenu, //17
             itemPackListMenu, //18
             itemPackDetailsMenu, //19
-            worldCheatsMenu //20
+            cheatsMenu //20
         };
         #endregion
 
@@ -197,9 +197,11 @@ namespace UmbraMenu
         private void OnDestroy()
         {
             SceneManager.activeSceneChanged -= OnSceneLoaded;
+            CleanUp(Menus.CheatsMenu.StopAll);
             CleanUp(Menus.Render.DisableInteractables);
             CleanUp(Menus.SpawnList.DisableSpawnList);
             CleanUp(Menus.ChestItemList.DisableChests);
+            CleanUp(PlayerCheats.Shutdown);
             CleanUp(WorldCheats.Shutdown);
             Menus.Spawn.spawnedObjects.Clear();
             CleanUp(Menus.Teleporter.ReleaseAssets);
@@ -224,6 +226,7 @@ namespace UmbraMenu
                 GetCharacter();
                 Utility.SoftResetMenu(false);
                 WorldCheats.Initialize();
+                PlayerCheats.Initialize();
                 routines = new[]
                 {
                     new SafeRoutine("Player lookup", CharacterRoutine),
@@ -239,6 +242,7 @@ namespace UmbraMenu
                     new SafeRoutine("Sprint", SprintRoutine),
                     new SafeRoutine("Jump pack", JumpPackRoutine),
                     new SafeRoutine("World cheats", WorldCheats.Tick),
+                    new SafeRoutine("Character cheats", PlayerCheats.Tick),
                     new SafeRoutine("Inventory refresh", () => inventoryItemListMenu.RefreshInventory()),
                     new SafeRoutine("Interactables refresh", Menus.Render.RefreshInteractablesIfNeeded),
                     new SafeRoutine("Navigation", UpdateNavIndexRoutine),
@@ -308,6 +312,7 @@ namespace UmbraMenu
 
         private void ResetForScene(Scene s1, Scene s2)
         {
+            PlayerCheats.ResetStage();
             WorldCheats.ResetStage();
             ClearCharacterReferences();
             Menus.Render.enemyBodies.Clear();
@@ -390,10 +395,10 @@ namespace UmbraMenu
                     if (devDoOnce && devMode)
                     {
                         Menus.Player.GodToggle = true;
-                        Utility.FindButtonById(1, 9).SetEnabled(true);
+                        ((Menus.Player)playerMenu).toggleGod.SetEnabled(true);
 
                         Menus.Movement.flightToggle = true;
-                        Utility.FindButtonById(2, 2).SetEnabled(true);
+                        ((Menus.Movement)movementMenu).toggleFlight.SetEnabled(true);
 
                         Menus.Movement.alwaysSprintToggle = true;
                         Utility.FindButtonById(2, 1).SetEnabled(true);
@@ -544,6 +549,7 @@ namespace UmbraMenu
 
         private void UpdateMainButtonsRoutine()
         {
+            ((Menus.CheatsMenu)cheatsMenu).RefreshControls();
             if (InGameCheck() && mainMenu.IsEnabled())
             {
                 for (int i = 1; i < menus.Count; i++)
@@ -1002,25 +1008,22 @@ namespace UmbraMenu
 
                 if (Input.GetKeyDown(keybindDict["REMOVE BUFFS"].KeyCode))
                 {
-                    Utility.FindButtonById(1, 7).GetAction().Invoke();
+                    Menus.Player.RemoveAllBuffs();
                 }
 
                 if (Input.GetKeyDown(keybindDict["AIMBOT"].KeyCode))
                 {
-                    Menus.Player.AimBotToggle = !Menus.Player.AimBotToggle;
-                    Utility.FindButtonById(1, 8).SetEnabled(Menus.Player.AimBotToggle);
+                    ((Menus.Player)playerMenu).toggleAimbot.Activate();
                 }
 
                 if (Input.GetKeyDown(keybindDict["GODMODE"].KeyCode))
                 {
-                    Menus.Player.GodToggle = !Menus.Player.GodToggle;
-                    Utility.FindButtonById(1, 9).SetEnabled(Menus.Player.GodToggle);
+                    ((Menus.Player)playerMenu).toggleGod.Activate();
                 }
 
                 if (Input.GetKeyDown(keybindDict["INFINITE SKILLS"].KeyCode))
                 {
-                    Menus.Player.SkillToggle = !Menus.Player.SkillToggle;
-                    Utility.FindButtonById(1, 10).SetEnabled(Menus.Player.SkillToggle);
+                    ((Menus.Player)playerMenu).toggleSkillCD.Activate();
                 }
                 #endregion
 
@@ -1042,14 +1045,13 @@ namespace UmbraMenu
 
                 if (Input.GetKeyDown(keybindDict["FLIGHT"].KeyCode))
                 {
-                    Menus.Movement.flightToggle = !Menus.Movement.flightToggle;
-                    Utility.FindButtonById(2, 2).SetEnabled(Menus.Movement.flightToggle);
+                    ((Menus.Movement)movementMenu).toggleFlight.Activate();
                 }
 
                 if (Input.GetKeyDown(keybindDict["JUMP PACK"].KeyCode))
                 {
                     Menus.Movement.jumpPackToggle = !Menus.Movement.jumpPackToggle;
-                    Utility.FindButtonById(2, 3).SetEnabled(Menus.Movement.jumpPackToggle);
+                    Utility.FindButtonById(2, 2).SetEnabled(Menus.Movement.jumpPackToggle);
                 }
                 #endregion
 
@@ -1173,17 +1175,17 @@ namespace UmbraMenu
 
                 if (Input.GetKeyDown(keybindDict["INSTANT TELE CHARGE"].KeyCode))
                 {
-                    Utility.FindButtonById(5, 2).GetAction().Invoke();
+                    if (WorldCheats.RequireHost()) ((Menus.Teleporter)teleporterMenu).InstaTeleporter();
                 }
 
                 if (Input.GetKeyDown(keybindDict["ADD MOUNTAIN STACK"].KeyCode))
                 {
-                    Utility.FindButtonById(5, 3).GetAction().Invoke();
+                    ((Menus.Teleporter)teleporterMenu).AddMountain();
                 }
 
                 if (Input.GetKeyDown(keybindDict["SPAWN ALL PORTALS"].KeyCode))
                 {
-                    Utility.FindButtonById(5, 4).GetAction().Invoke();
+                    ((Menus.Teleporter)teleporterMenu).SpawnPortals("all");
                 }
 
                 if (Input.GetKeyDown(keybindDict["SPAWN BLUE PORTAL"].KeyCode))

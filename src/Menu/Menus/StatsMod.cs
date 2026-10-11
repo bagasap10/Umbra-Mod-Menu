@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -173,7 +173,7 @@ namespace UmbraMenu.Menus
                     changeMultiplier,
                     toggleViewStatsMenu
                 });
-                SetActivatingButton(Utility.FindButtonById(1, 4));
+                SetActivatingButton(Utility.FindButtonById(1, 1));
                 SetPrevMenuId(1);
             }
         }

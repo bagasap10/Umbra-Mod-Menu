@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UmbraMenu.Menus
@@ -110,11 +110,11 @@ namespace UmbraMenu.Menus
             if (Player.GodToggle)
             {
                 Player.GodToggle = false;
-                Utility.FindButtonById(1, 9).SetEnabled(false);
+                ((Player)UmbraMenu.playerMenu).toggleGod.SetEnabled(false);
                 Player.DisabledGodMode();
                 UmbraMenu.GodVersion++;
                 Player.GodToggle = true;
-                Utility.FindButtonById(1, 9).SetEnabled(true);
+                ((Player)UmbraMenu.playerMenu).toggleGod.SetEnabled(true);
             }
             else
             {

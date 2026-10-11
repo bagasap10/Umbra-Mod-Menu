@@ -8,9 +8,9 @@ namespace UmbraMenu
     // One window owns all coordinates, page selection and scrolling.
     internal static class MenuUI
     {
-        private static readonly string[] names = { "Overview", "Player", "Movement", "Items", "Spawn", "Teleporter", "Visuals", "Settings", "Modify stats", "Live stats", "Characters", "Buffs", "Spawn items", "Spawn equipment", "Chest items", "Spawn catalog", "Keybinds", "Remove items", "Item packs", "Pack details", "World cheats" };
+        private static readonly string[] names = { "Overview", "Player", "Movement", "Items", "Spawn", "Teleporter", "Visuals", "Settings", "Modify stats", "Live stats", "Characters", "Buffs", "Spawn items", "Spawn equipment", "Chest items", "Spawn catalog", "Keybinds", "Remove items", "Item packs", "Pack details", "Cheats" };
         private static readonly string[] descriptions = {
-            "Your tools, in one place.", "Resources, abilities and character tools.", "Move through the world your way.",
+            "Your tools, in one place.", "Character, buffs and stat tools.", "Move through the world your way.",
             "Manage your inventory and equipment.", "Create enemies and interactables.", "Stage controls and portals, grouped by expansion.",
             "Keep track of enemies, interactables and active mods.", "Customize the menu and your controls.",
             "Adjust values with the minus and plus controls.", "Your current character stats, updated live.",
@@ -18,8 +18,9 @@ namespace UmbraMenu
             "Equipment, grouped by type and expansion.", "Choose an item for the nearest chest.",
             "Select an entry to spawn it.", "Select a binding, then press a key to replace it.",
             "Your current inventory. Each click removes one stack.",
-            "General packs and CHEF recipes, sorted by value.", "Review the contents, then give the complete pack.", "Host controls for stage loot, shopping and combat." };
+            "General packs and CHEF recipes, sorted by value.", "Review the contents, then give the complete pack.", "Resources, survival, movement, combat and world cheats." };
 
+        internal static readonly int[] SidebarPages = { 0, 20, 1, 2, 3, 4, 5, 6, 7 };
         private static Rect window;
         private static Rect body;
         private static float rowWidth;
@@ -297,7 +298,7 @@ namespace UmbraMenu
             GUI.Label(new Rect(6, 58, rail - 12, 20), "RISK OF RAIN 2", UITheme.Caption);
 
             int category = CategoryFor(ActiveMenuId);
-            string breadcrumb = ActiveMenuId > 7 ? names[category] + " / " + names[ActiveMenuId] : "WORKSPACE / " + names[ActiveMenuId];
+            string breadcrumb = SidebarPages.Contains(ActiveMenuId) ? "WORKSPACE / " + names[ActiveMenuId] : names[category] + " / " + names[ActiveMenuId];
             GUI.Label(new Rect(rail + 10, 9, window.width - rail - 118, 20), breadcrumb, UITheme.Caption);
             GUI.Label(new Rect(rail + 10, 29, window.width - rail - 118, 31), ActiveMenuId == 19 ? UmbraMenu.menus[ActiveMenuId].GetTitle() : names[ActiveMenuId], UITheme.Title);
             GUI.Label(new Rect(rail + 10, 60, window.width - rail - 22, 22), descriptions[ActiveMenuId], UITheme.Hint);
@@ -311,14 +312,15 @@ namespace UmbraMenu
 
             GUI.Label(new Rect(6, 91, rail - 12, 24), "WORKSPACE", UITheme.Caption);
             Rect sidebarViewport = new Rect(12, 122, rail - 24, Mathf.Max(40, window.height - 240));
-            sidebarScroll = GUI.BeginScrollView(sidebarViewport, sidebarScroll, new Rect(0, 0, rail - 38, 8 * 36), false, false, GUIStyle.none, UITheme.ScrollTrack);
-            for (int page = 0; page <= 7; page++)
+            sidebarScroll = GUI.BeginScrollView(sidebarViewport, sidebarScroll, new Rect(0, 0, rail - 38, SidebarPages.Length * 36), false, false, GUIStyle.none, UITheme.ScrollTrack);
+            for (int slot = 0; slot < SidebarPages.Length; slot++)
             {
+                int page = SidebarPages[slot];
                 bool selected = category == page;
                 bool oldEnabled = GUI.enabled;
-                GUI.enabled = oldEnabled && (page == 0 || CanUsePages);
-                if (GUI.Button(new Rect(0, page * 36, rail - 40, 31), names[page], selected ? UITheme.SidebarSelected : UITheme.Sidebar)) NavigateTo(page);
-                if (selected) UITheme.Fill(new Rect(0, page * 36 + 7, 3, 17), UITheme.Accent);
+                GUI.enabled = oldEnabled && (page == 0 || (CanUsePages && page < UmbraMenu.menus.Count));
+                if (GUI.Button(new Rect(0, slot * 36, rail - 40, 31), names[page], selected ? UITheme.SidebarSelected : UITheme.Sidebar)) NavigateTo(page);
+                if (selected) UITheme.Fill(new Rect(0, slot * 36 + 7, 3, 17), UITheme.Accent);
                 GUI.enabled = oldEnabled;
             }
             GUI.EndScrollView();
@@ -366,8 +368,8 @@ namespace UmbraMenu
 
         private static int CategoryFor(int page)
         {
-            for (int depth = 0; page > 7 && depth < names.Length; depth++) page = UmbraMenu.menus[page].GetPrevMenuId();
-            return Mathf.Clamp(page, 0, 7);
+            for (int depth = 0; !SidebarPages.Contains(page) && depth < names.Length; depth++) { if (page < 0 || page >= UmbraMenu.menus.Count) return 0; page = UmbraMenu.menus[page].GetPrevMenuId(); }
+            return SidebarPages.Contains(page) ? page : 0;
         }
 
         public static void DrawRows(IMenu menu)
@@ -405,6 +407,7 @@ namespace UmbraMenu
             if (menu == 0)
             {
                 if (position == 8) return new Rect(0, 332, rowWidth, 40);
+                if (position == 9) position = 8;
                 float cardWidth = (rowWidth - 10) / 2;
                 return new Rect((position - 1) % 2 * (cardWidth + 10), (position - 1) / 2 * 82, cardWidth, 72);
             }
@@ -429,7 +432,7 @@ namespace UmbraMenu
             bool toggle = button is TogglableButton || button is TogglableMulButton;
             bool confirmation = string.Equals(button.OnText, "CONFIRM?", StringComparison.OrdinalIgnoreCase);
             int child = FindChild(menu, button.Position);
-            bool card = menu == 0 && button.Position < 8;
+            bool card = menu == 0 && (button.Position < 8 || button.Position == 9);
             bool keybind = menu == 16;
             GUIStyle style = confirmation ? UITheme.DangerButton : card ? (selected ? UITheme.SelectedCard : UITheme.Card) : selected ? UITheme.SelectedButton : UITheme.Button;
             Rect actionRect = rect;
@@ -460,7 +463,7 @@ namespace UmbraMenu
             }
             GUI.Label(labelRect, label, labelStyle);
             if (card)
-                GUI.Label(new Rect(rect.x, rect.y + 36, rect.width - 26, 28), descriptions[button.Position].Split('.')[0], UITheme.Caption);
+                GUI.Label(new Rect(rect.x, rect.y + 36, rect.width - 26, 28), descriptions[button.Position == 9 ? 20 : button.Position].Split('.')[0], UITheme.Caption);
             Rect badgeRect = new Rect(actionRect.xMax - badgeWidth - 12, actionRect.y + (actionRect.height - 20) / 2, badgeWidth, 20);
             if (toggle && child < 0 && !confirmation && !keybind) GUI.Box(badgeRect, badge, button.Enabled ? UITheme.SwitchOn : UITheme.SwitchOff);
             else GUI.Label(badgeRect, badge, UITheme.Badge);

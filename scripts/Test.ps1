@@ -26,9 +26,17 @@ try {
     if ($endConstructor -lt 0) { throw 'The Items constructor boundary could not be found.' }
     $fragment = [IO.File]::ReadAllText((Join-Path $suiteRoot 'tests\Menu\ItemsActions.fragment'))
     [IO.File]::WriteAllText((Join-Path $outDir 'ItemsConstructor.cs'), $itemsSource.Substring(0,$endConstructor) + $fragment)
+    foreach ($menuName in @('Player','Movement')) {
+        $sourcePath = Join-Path $suiteRoot ("src\Menu\Menus\$menuName.cs")
+        $menuSource = [IO.File]::ReadAllText($sourcePath)
+        $boundary = $menuSource.IndexOf('        public override void Draw()', [StringComparison]::Ordinal)
+        if ($boundary -lt 0) { throw "The $menuName constructor boundary could not be found." }
+        $actionFragment = [IO.File]::ReadAllText((Join-Path $suiteRoot "tests\Menu\${menuName}Actions.fragment"))
+        [IO.File]::WriteAllText((Join-Path $outDir "${menuName}Constructor.cs"), $menuSource.Substring(0,$boundary) + $actionFragment)
+    }
     Run-Checks 'UiChecks' ($uiSources + (@('MockUnity.cs','IconMock.cs','Checks.cs','ResizeChecks.cs','BackShortcutChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
-    $gameSources = @('WorldCheats.cs','Menus\WorldCheatsMenu.cs','CatalogGrouping.cs','Reflections.cs','CatalogIcons.cs','ItemPacks.cs','PortalCatalog.cs','PortalIcons.cs','EspTargets.cs','InventorySafety.cs','Menus\Teleporter.cs','Menus\ItemList.cs','Menus\InventoryItemList.cs','Menus\EquipmentList.cs','Menus\ChestItemList.cs','Menus\ItemPackList.cs','Menus\ItemPackDetails.cs') | ForEach-Object { "src\Menu\$_" }
-    Run-Checks 'GameChecks' ($uiSources + $gameSources + @('artifacts\tests\ItemsConstructor.cs') + (@('GameMockUnity.cs','GameChecks.cs','GameExtraChecks.cs','ChestMock.cs','WorldCheatsMock.cs','WorldCheatsChecks.cs','CatalogSearchChecks.cs','GameIconMock.cs','PackChecks.cs','PortalIconChecks.cs','StabilityChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
+    $gameSources = @('WorldCheats.cs','PlayerCheats.cs','Menus\Main.cs','Menus\CheatsMenu.cs','CatalogGrouping.cs','Reflections.cs','CatalogIcons.cs','ItemPacks.cs','PortalCatalog.cs','PortalIcons.cs','EspTargets.cs','InventorySafety.cs','Menus\Teleporter.cs','Menus\ItemList.cs','Menus\InventoryItemList.cs','Menus\EquipmentList.cs','Menus\ChestItemList.cs','Menus\ItemPackList.cs','Menus\ItemPackDetails.cs') | ForEach-Object { "src\Menu\$_" }
+    Run-Checks 'GameChecks' ($uiSources + $gameSources + @('artifacts\tests\ItemsConstructor.cs','artifacts\tests\PlayerConstructor.cs','artifacts\tests\MovementConstructor.cs') + (@('GameMockUnity.cs','GameChecks.cs','GameExtraChecks.cs','ChestMock.cs','WorldCheatsMock.cs','WorldCheatsChecks.cs','PlayerCheatsMock.cs','PlayerCheatsChecks.cs','CatalogSearchChecks.cs','GameIconMock.cs','PackChecks.cs','PortalIconChecks.cs','StabilityChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
     $runtimeSources = @('Loader.cs','SafeRoutine.cs','MenuSettings.cs','Textures.cs','Reflections.cs','InventorySafety.cs') | ForEach-Object { "src\Menu\$_" }
     Run-Checks 'RuntimeChecks' ($runtimeSources + @('tests\Menu\RuntimeMock.cs','tests\Menu\RuntimeChecks.cs')) @('System.Core.dll')
     $backend = Join-Path $suiteRoot 'vendor\SharpMonoInjector\bin\Release\SharpMonoInjector.dll'

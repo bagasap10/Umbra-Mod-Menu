@@ -38,8 +38,8 @@ namespace RoR2
 }
 namespace UmbraMenu
 {
-    public static class UmbraMenu { public static List<Menu> menus=new List<Menu>(); public static List<ItemIndex> items=new List<ItemIndex>();public static List<EquipmentIndex> equipment=new List<EquipmentIndex>();public static global::UmbraMenu.Menus.InventoryItemList inventoryItemListMenu; public static Menu chestItemListMenu; public const string VERSION="4.0.1"; public const string DLC_NAME="Hallowed Concepts"; public static bool AllowNavigation=true; public static bool forceFullModMenu,listenForKeybind,chatOpen; public static Menu mainMenu; public static Dictionary<string,Keybind> keybindDict=new Dictionary<string,Keybind>(); public static bool navigationToggle,lowResolutionMonitor,scrolled,characterCollected,InGame=true; public static int previousMenuOpen; public static float Width=350,WindowWidth=680,WindowHeight=560,GlassOpacity=.62f; public static CharacterMaster LocalPlayer; public static Inventory LocalPlayerInv; public static CharacterBody LocalPlayerBody; public static bool InGameCheck() { return InGame; } public static void GetCharacter() {} }
-    public static class Utility { public static void SaveSettings(){} public static Button FindButtonById(int menuId,int buttonId) { return UmbraMenu.menus[menuId].GetButtons().First(button=>button.GetId()==buttonId); } }
+    public static class UmbraMenu { public static List<Menu> menus=new List<Menu>(); public static List<ItemIndex> items=new List<ItemIndex>();public static List<EquipmentIndex> equipment=new List<EquipmentIndex>();public static global::UmbraMenu.Menus.InventoryItemList inventoryItemListMenu; public static Menu chestItemListMenu; public const string VERSION="4.1.1"; public const string DLC_NAME="Hallowed Concepts"; public static bool AllowNavigation=true; public static bool forceFullModMenu,listenForKeybind,chatOpen; public static Menu mainMenu,playerMenu,movementMenu,teleporterMenu,cheatsMenu; public static Dictionary<string,Keybind> keybindDict=new Dictionary<string,Keybind>(); public static bool navigationToggle,lowResolutionMonitor,scrolled,characterCollected,InGame=true; public static int previousMenuOpen; public static float Width=350,WindowWidth=680,WindowHeight=560,GlassOpacity=.62f; public static CharacterMaster LocalPlayer; public static Inventory LocalPlayerInv; public static CharacterBody LocalPlayerBody; public static bool InGameCheck() { return InGame; } public static void GetCharacter() {} }
+    public static class Utility { public static void StubbedFunction(){} public static void SaveSettings(){} public static Button FindButtonById(int menuId,int buttonId) { return UmbraMenu.menus[menuId].GetButtons().First(button=>button.GetId()==buttonId); } }
     public static class Styles { public static GUIStyle OnStyle=new GUIStyle(),OffStyle=new GUIStyle(); public static GUIStyle SelectedChestStyle=new GUIStyle(); public static GUIStyle LabelStyle=new GUIStyle(),MainBgStyle=new GUIStyle(),BtnStyle=new GUIStyle(),HighlightBtnStyle=new GUIStyle(),TitleStyle=new GUIStyle(),CornerStyle=new GUIStyle(); }
 }
 
@@ -57,7 +57,7 @@ partial class Checks
         var index=(ItemIndex)id; string token="ITEM_"+id; Language.Names[token]=name;
         ItemCatalog.Defs[index]=new ItemDef { tier=tier,nameToken=token,requiredExpansion=Expansion(dlc),hidden=hidden }; return index;
     }
-    static int Main() { try { RunChecks(); PackChecks(); WorldCheatsChecks(); return 0; } catch(Exception e) { Console.Error.WriteLine(e); return 1; } }
+    static int Main() { try { RunChecks(); PackChecks(); WorldCheatsChecks(); CharacterCheatsChecks(); return 0; } catch(Exception e) { Console.Error.WriteLine(e); return 1; } }
     static void RunChecks()
     {
         typeof(MenuUI).GetField("body",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,new Rect(0,0,600,500));
@@ -278,7 +278,7 @@ partial class Checks
     }
 }
 
-namespace UmbraMenu { public class Keybind { public UnityEngine.KeyCode KeyCode; } public static class Loader { public static bool devBuild,updateAvailable; public static void Report(string state,string message,string shortcut="") {} } }
+namespace UmbraMenu { public class Keybind { public UnityEngine.KeyCode KeyCode; } public static class Loader { public static bool devBuild,updateAvailable,upToDate; public static void Unload(){} public static void Report(string state,string message,string shortcut="") {} } }
 
 
 

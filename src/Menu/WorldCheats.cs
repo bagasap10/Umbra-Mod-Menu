@@ -59,7 +59,7 @@ namespace UmbraMenu
         public static bool RequireHost()
         {
             if (IsHost) return true;
-            Chat.AddMessage("Umbra: World Cheats requires the host of an active run.");
+            Chat.AddMessage("Umbra: This cheat requires the host of an active run.");
             return false;
         }
         public static void SettingsChanged()

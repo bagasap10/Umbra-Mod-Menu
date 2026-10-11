@@ -28,6 +28,10 @@
       <HintPath>$(GameManagedDir)\HGCSharpUtils.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="KinematicCharacterController">
+      <HintPath>$(GameManagedDir)\KinematicCharacterController.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Rewired_Core">
       <HintPath>$(GameManagedDir)\Rewired_Core.dll</HintPath>
       <Private>false</Private>

@@ -1,0 +1,4 @@
+private static void ToggleFlight(){flightToggle=!flightToggle;}
+private static void ToggleSprint(){alwaysSprintToggle=!alwaysSprintToggle;}
+private static void ToggleJump(){jumpPackToggle=!jumpPackToggle;}
+}}

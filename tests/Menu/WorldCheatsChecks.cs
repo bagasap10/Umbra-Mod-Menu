@@ -207,15 +207,27 @@ partial class Checks
         Assert(manyPrices.All(p => p.cost == 25) && manyChests.All(c => c.NativeDropCount == 1),
             "Bounded snapshot cleanup must still restore all affected targets.");
 
-        while(Root.menus.Count<=WorldCheatsMenu.MenuId) Root.menus.Add(PlainMenu(Root.menus.Count));
-        var parent=Root.menus[4];
-        parent.AddButtons(new List<Button> {new Button(new TogglableButton(parent,8,"WORLD CHEATS : OFF","WORLD CHEATS : ON",
-            ()=>Root.menus[20].ToggleMenu(),()=>Root.menus[20].ToggleMenu()))});
-        var menu=new WorldCheatsMenu(); Root.menus[20]=menu;
-        Assert(menu.GetPrevMenuId()==4 && menu.GetActivatingButton()==parent.GetButtons()[0],
-            "World Cheats must be an ordinary child page under Spawn.");
+        while(Root.menus.Count<=CheatsMenu.MenuId) Root.menus.Add(PlainMenu(Root.menus.Count));
+        Root.menus[0]=new Main(); Root.mainMenu=Root.menus[0]; var parent=Root.menus[0]; Root.playerMenu=Root.menus[1]=new Player(); Root.movementMenu=Root.menus[2]=new Movement(); Root.teleporterMenu=Root.menus[5]=new Teleporter();
+
+        var menu=new CheatsMenu(); Root.menus[20]=Root.cheatsMenu=menu;
+        Assert(MenuUI.SidebarPages.Take(3).SequenceEqual(new[]{0,20,1}), "Cheats must appear directly below Overview and above Player.");
+        Assert((int)typeof(MenuUI).GetMethod("CategoryFor",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static).Invoke(null,new object[]{20})==20, "Cheats must select its own sidebar category.");
+        Assert(Root.playerMenu.GetButtons().Select(b=>b.GetId()).SequenceEqual(Enumerable.Range(1,6)) && !Root.playerMenu.GetButtons().Any(b=>System.Text.RegularExpressions.Regex.IsMatch(Row(b).Text,"GIVE MONEY|GIVE LUNAR|GIVE EXPERIENCE|GOD MODE|AIMBOT|INFINITE SKILLS")), "Player must retain six character tools without duplicate moved controls.");
+        Assert(Root.movementMenu.GetButtons().Select(b=>b.GetId()).SequenceEqual(new[]{1,2}) && !Root.movementMenu.GetButtons().Any(b=>Row(b).Text.Contains("FLIGHT")), "Movement must retain sprint and jump pack with contiguous IDs.");
+        foreach(var name in new[]{"God Mode","Aimbot","Infinite Skills","Flight"})
+        {
+            var button=menu.GetButtons().Single(b=>Row(b).Text.StartsWith(name,StringComparison.OrdinalIgnoreCase));
+            button.Activate(); Assert(button.IsEnabled(), "A moved legacy control must turn on its backend.");
+            button.Activate(); Assert(!button.IsEnabled(), "A moved legacy control must turn off its backend.");
+        }
+        TeleporterInteraction.instance=new TeleporterInteraction();
+        menu.GetButtons().Single(b=>Row(b).Text=="INSTANT TELEPORTER CHARGING").Activate();
+        Assert(TeleporterInteraction.instance.holdoutZoneController.baseChargeDuration==1, "The moved charge control must change the current teleporter.");
+        Assert(menu.GetPrevMenuId()==0 && menu.GetActivatingButton()==parent.GetButtons().Single(b=>b.GetId()==9),
+            "Cheats must be a top-level page below Overview.");
         Assert(menu.GetButtons().Select(b=>b.GetId()).SequenceEqual(Enumerable.Range(1,menu.GetButtons().Count)) &&
-            menu.GetButtons().Count(b=>b.GetAction()!=null)==8, "The submenu must contain seven cheat controls plus reset, with contiguous row IDs.");
+            menu.GetButtons().Count(b=>b.GetAction()!=null)==24, "The submenu must contain twenty-three cheat controls plus reset, with contiguous row IDs.");
         var freeButton=menu.GetButtons().Single(b=>Row(b).Text.StartsWith("FREE SHOPPING", StringComparison.OrdinalIgnoreCase));
         NetworkServer.active=false; freeButton.Activate();
         Assert(!WorldCheats.FreeShopping && !freeButton.IsEnabled(), "A non-host must not enable cheats or leave a misleading enabled button.");
@@ -230,10 +242,10 @@ partial class Checks
         Assert(Navigation.buttonIndex==2, "Keyboard navigation must skip headings and help rows.");
         Screen.width=1000; Screen.height=800; Root.WindowWidth=680; Root.WindowHeight=560; MenuUI.ResetWindow();
         Event.current=new Event {type=EventType.Repaint}; Root.navigationToggle=false; GUI.StartCanvas(); MenuUI.Draw();
-        GUI.Save("artifacts/tests/previews/world-cheats.png");
-        menu.SetScrollPosition(new Vector2(0,1000)); GUI.StartCanvas(); MenuUI.Draw(); GUI.Save("artifacts/tests/previews/world-cheats-combat.png");
-        MenuUI.Back(); Assert(MenuUI.ActiveMenuId==4 && WorldCheats.FreeShopping,"Leaving the submenu must preserve the chosen cheats.");
-        menu.GetButtons().Single(b=>Row(b).Text=="TURN OFF ALL WORLD CHEATS").Activate();
+        GUI.Save("artifacts/tests/previews/cheats-resources.png");
+        menu.SetScrollPosition(new Vector2(0,1000)); GUI.StartCanvas(); MenuUI.Draw(); GUI.Save("artifacts/tests/previews/cheats-combat.png");
+        MenuUI.Back(); Assert(MenuUI.ActiveMenuId==0 && WorldCheats.FreeShopping,"Leaving the submenu must preserve the chosen cheats.");
+        menu.GetButtons().Single(b=>Row(b).Text=="TURN OFF ALL CHEATS").Activate();
         Assert(!WorldCheats.FreeShopping && !WorldCheats.StageAbundance && WorldCheats.Rarity==LootRarity.Natural,
             "The reset action must release all cheat settings.");
 

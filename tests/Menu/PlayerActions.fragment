@@ -1,0 +1,18 @@
+public void ToggleAimbot(){AimBotToggle=!AimBotToggle;}
+public void ToggleGodMode(){GodToggle=!GodToggle;if(!GodToggle)DisabledGodMode();}
+public static int GodDisables;
+public static void DisabledGodMode(){GodDisables++;}
+public static void ToggleSkillCD(){SkillToggle=!SkillToggle;}
+public static void respawnPlayer(){}
+public static void RemoveAllBuffs(){}
+public static void UnlockAll(){}
+public static void GiveXP(){}
+public static void GiveMoney(){PlayerCheats.GiveManualMoney(moneyToGive);}
+public static void GiveLunarCoins(){}
+public void IncreaseMoney(){MoneyToGive=moneyToGive+1;}
+public void DecreaseMoney(){MoneyToGive=moneyToGive>0?moneyToGive-1:0;}
+public void IncreaseCoins(){CoinsToGive=coinsToGive+1;}
+public void DecreaseCoins(){CoinsToGive=coinsToGive>0?coinsToGive-1:0;}
+public void IncreaseXP(){XPToGive=xpToGive+1;}
+public void DecreaseXP(){XPToGive=xpToGive>0?xpToGive-1:0;}
+}}

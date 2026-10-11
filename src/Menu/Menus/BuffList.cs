@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoR2;
@@ -24,7 +24,7 @@ namespace UmbraMenu.Menus
                     i++;
                 }
                 AddButtons(buttons);
-                SetActivatingButton(Utility.FindButtonById(1, 6));
+                SetActivatingButton(Utility.FindButtonById(1, 3));
                 SetPrevMenuId(1);
             }
         }

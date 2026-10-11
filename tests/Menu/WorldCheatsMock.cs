@@ -94,7 +94,7 @@ namespace RoR2
         public void End() => onRunDestroyGlobal?.Invoke(this);
         public void PublishPools() => onAvailablePickupsModified?.Invoke(this);
     }
-    public class CharacterMaster : MonoBehaviour { public float luck { get; private set; } }
+    public partial class CharacterMaster : MonoBehaviour { public float luck { get; private set; } }
     public class EntityStateMachine : MonoBehaviour {}
     public class SetStateOnHurt : MonoBehaviour
     {

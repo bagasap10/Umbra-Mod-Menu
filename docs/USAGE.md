@@ -1,6 +1,6 @@
 # Run Umbra Suite
 
-**Version 4.0.1 / Hallowed Concepts (DLC#4).** Suite versions use DLC count.feature update.fix numbering.
+**Version 4.1.1 / Hallowed Concepts (DLC#4).** Suite versions use DLC count.feature update.fix numbering.
 
 Extract the full release ZIP and double-click **UmbraInjector.exe**. The launcher does not need a separate injector installation, an arbitrary DLL picker, a manual PID, or a working directory set by a shortcut.
 
@@ -16,7 +16,7 @@ Change Chest Item locks the nearest unopened chest when the page opens. Its list
 
 The Teleporter / Portals page includes embedded wiki thumbnails. A neutral ? icon marks a portal whose photograph is unavailable; its spawn action still works. Images work offline and need no additional image files. Image sources are listed in THIRD_PARTY_NOTICES.md.
 
-Open **Spawn → World Cheats** for Stage Abundance, Chest Paradise, Free Shopping, Loot Multiplier, Rarity Control, Proc Chaos and Freeze Enemies. These controls require the host of an active run. Stage generation controls apply to future stages; the other controls apply during the run. Leaving the page keeps cheats enabled. Use **Turn Off All World Cheats** to release the effects; ending a run also resets them. Extra chests and loot already collected remain in the game.
+Open **Cheats**, directly below Overview, for resource, survival, movement, combat and world controls. The eight new cheats and world controls require single-player or host authority. Stage Abundance and Chest Paradise affect future stages. Closing the page keeps enabled controls active. **Turn Off All Cheats** disables its switches and restores reversible changes; earned resources, extra chests and collected loot remain. See [Cheats controls and limits](cheats.md).
 
 ## Troubleshooting
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RoR2;
@@ -23,12 +23,11 @@ namespace UmbraMenu.Menus
             {
                 toggleAlwaysSprint = new Button(new TogglableButton(this, 1, "ALWAYS SPRINT : OFF", "ALWAYS SPRINT : ON", ToggleSprint, ToggleSprint));
                 toggleFlight = new Button(new TogglableButton(this, 2, "FLIGHT : OFF", "FLIGHT : ON", ToggleFlight, ToggleFlight));
-                toggleJumpPack = new Button(new TogglableButton(this, 3, "JUMP PACK : OFF", "JUMP PACK : ON", ToggleJump, ToggleJump));
+                toggleJumpPack = new Button(new TogglableButton(this, 2, "JUMP PACK : OFF", "JUMP PACK : ON", ToggleJump, ToggleJump));
 
                 AddButtons(new List<Button>()
                 {
                     toggleAlwaysSprint,
-                    toggleFlight,
                     toggleJumpPack
                 });
                 SetActivatingButton(Utility.FindButtonById(0, 2));
@@ -90,10 +89,6 @@ namespace UmbraMenu.Menus
         {
             try
             {
-                if (Utility.GetCurrentCharacter().ToString() != "Loader")
-                {
-                    UmbraMenu.LocalPlayerBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
-                }
 
                 var forwardDirection = UmbraMenu.LocalPlayerBody.GetComponent<InputBankTest>().moveVector.normalized;
                 var aimDirection = UmbraMenu.LocalPlayerBody.GetComponent<InputBankTest>().aimDirection.normalized;
@@ -163,10 +158,6 @@ namespace UmbraMenu.Menus
         {
             try
             {
-                if (Utility.GetCurrentCharacter().ToString() != "Loader")
-                {
-                    UmbraMenu.LocalPlayerBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
-                }
 
                 var forwardDirection = UmbraMenu.LocalPlayerBody.GetComponent<InputBankTest>().moveVector.normalized;
                 var aimDirection = UmbraMenu.LocalPlayerBody.GetComponent<InputBankTest>().aimDirection.normalized;

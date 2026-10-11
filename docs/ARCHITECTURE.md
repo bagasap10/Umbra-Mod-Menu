@@ -49,6 +49,10 @@ The build compiles against the actual installed game DLLs with warnings treated 
 
 Mono thread registration follows the [official embedding API guidance](https://www.mono-project.com/docs/advanced/embedding/). The backend's existing attach/OS-thread-exit pattern is retained; it never dereferences captured managed exception objects after their remote thread has exited.
 
+## Character cheats and navigation
+
+PlayerCheats uses native damage, gold-collection, money-change and per-body stat-calculation events. Derived stat values are applied after native calculation and restored only while owned. Gold bonus grants use a recursion guard and saturating arithmetic. Body/master references and event subscriptions transfer on replacement and are released on scene/run/unload. Flight and Jump Pack share fall-flag ownership with No Fall Damage. The Cheats page keeps menu ID 20; an explicit sidebar order puts it below Overview while preserving existing category IDs and configured keybind names.
+
 ## Repository boundaries
 
 - `src/Menu`: game-facing menu code.

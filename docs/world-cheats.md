@@ -1,8 +1,10 @@
-# World Cheats
+# World controls in Cheats
 
-Open **Spawn → World Cheats** during a run. These controls require the host (including single-player). All cheats start off. They stay enabled when moving between stages in the same run, and reset when the run ends, settings are reset, or the menu unloads. Leaving this page keeps the selected cheats active.
+These controls now share the [Cheats page](cheats.md) with character, movement and resource controls.
 
-Click a switch to toggle it; use **− / +** to adjust its value. **Numpad 1** returns to Spawn. **Turn Off All World Cheats** restores the changes that can still be restored.
+Open **Cheats**, directly below Overview, during a run. These controls require the host (including single-player). All cheats start off. They stay enabled when moving between stages in the same run, and reset when the run ends, settings are reset, or the menu unloads. Leaving this page keeps the selected cheats active.
+
+Click a switch to toggle it; use **− / +** to adjust its value. **Numpad 1** returns to Overview. **Turn Off All Cheats** restores the changes that can still be restored.
 
 | Control | Behavior |
 | --- | --- |

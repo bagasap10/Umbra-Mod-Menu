@@ -82,28 +82,22 @@ namespace UmbraMenu.Menus
                 giveMoney = new Button(new MulButton(this, 1, $"GIVE MONEY : {moneyToGive}", GiveMoney, IncreaseMoney, DecreaseMoney));
                 giveCoins = new Button(new MulButton(this, 2, $"GIVE LUNAR COINS : {coinsToGive}", GiveLunarCoins, IncreaseCoins, DecreaseCoins));
                 giveExperience = new Button(new MulButton(this, 3, $"GIVE EXPERIENCE : {xpToGive}", GiveXP, IncreaseXP, DecreaseXP));
-                toggleStatsMod = new Button(new TogglableButton(this, 4, "STATS MENU : OFF", "STATS MENU : ON", ToggleStatsMenu, ToggleStatsMenu));
-                toggleChangeCharacter = new Button(new TogglableButton(this, 5, "CHANGE CHARACTER : OFF", "CHANGE CHARACTER : ON", ToggleCharacterListMenu, ToggleCharacterListMenu));
-                toggleBuff = new Button(new TogglableButton(this, 6, "GIVE BUFF MENU : OFF", "GIVE BUFF MENU : ON", ToggleBuffListMenu, ToggleBuffListMenu));
-                removeBuffs = new Button(new NormalButton(this, 7, "REMOVE ALL BUFFS", RemoveAllBuffs));
+                toggleStatsMod = new Button(new TogglableButton(this, 1, "STATS MENU : OFF", "STATS MENU : ON", ToggleStatsMenu, ToggleStatsMenu));
+                toggleChangeCharacter = new Button(new TogglableButton(this, 2, "CHANGE CHARACTER : OFF", "CHANGE CHARACTER : ON", ToggleCharacterListMenu, ToggleCharacterListMenu));
+                toggleBuff = new Button(new TogglableButton(this, 3, "GIVE BUFF MENU : OFF", "GIVE BUFF MENU : ON", ToggleBuffListMenu, ToggleBuffListMenu));
+                removeBuffs = new Button(new NormalButton(this, 4, "REMOVE ALL BUFFS", RemoveAllBuffs));
                 toggleAimbot = new Button(new TogglableButton(this, 8, "AIMBOT : OFF", "AIMBOT : ON", ToggleAimbot, ToggleAimbot));
                 toggleGod = new Button(new TogglableButton(this, 9, "GOD MODE : OFF", "GOD MODE : ON", ToggleGodMode, ToggleGodMode));
                 toggleSkillCD = new Button(new TogglableButton(this, 10, "INFINITE SKILLS : OFF", "INFINITE SKILLS : ON", ToggleSkillCD, ToggleSkillCD));
-                respawn = new Button(new NormalButton(this, 11, "RESPAWN", respawnPlayer));
-                unlockAll = new Button(new TogglableButton(this, 12, "UNLOCK ALL", "CONFIRM?", DoNothing, UnlockAll));
+                respawn = new Button(new NormalButton(this, 5, "RESPAWN", respawnPlayer));
+                unlockAll = new Button(new TogglableButton(this, 6, "UNLOCK ALL", "CONFIRM?", DoNothing, UnlockAll));
 
                 AddButtons(new List<Button>()
                 {
-                    giveMoney,
-                    giveCoins,
-                    giveExperience,
                     toggleStatsMod,
                     toggleChangeCharacter,
                     toggleBuff,
                     removeBuffs,
-                    toggleAimbot,
-                    toggleGod,
-                    toggleSkillCD,
                     respawn,
                     unlockAll
                 });
@@ -187,7 +181,7 @@ namespace UmbraMenu.Menus
 
         public static void GiveMoney()
         {
-            UmbraMenu.LocalPlayer.GiveMoney(moneyToGive, false);
+            PlayerCheats.GiveManualMoney(moneyToGive);
         }
 
         //uh, duh.

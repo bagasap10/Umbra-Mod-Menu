@@ -84,8 +84,8 @@ namespace RoR2
     public enum TeamIndex { None=-1,Neutral,Player,Monster,Lunar,Void }
     public struct TeamMask { int mask; public static TeamMask allButNeutral { get { return new TeamMask { mask=30 }; } } public void RemoveTeam(TeamIndex team) { mask&=~(1<<(int)team); } public bool HasTeam(TeamIndex team) { return team>=0 && (mask&(1<<(int)team))!=0; } }
     public class TeamComponent : MonoBehaviour { public TeamIndex teamIndex; }
-    public class HealthComponent : MonoBehaviour { public bool alive=true; }
-    public class CharacterBody : MonoBehaviour { public static readonly List<CharacterBody> readOnlyInstancesList=new List<CharacterBody>(); public TeamComponent teamComponent; public HealthComponent healthComponent; public HurtBoxGroup hurtBoxGroup; public HurtBox mainHurtBox; public float radius=1; public Vector3 corePosition { get { return transform.position; } } }
+    public partial class HealthComponent : MonoBehaviour { public bool alive=true; }
+    public partial class CharacterBody : MonoBehaviour { public static readonly List<CharacterBody> readOnlyInstancesList=new List<CharacterBody>(); public TeamComponent teamComponent; public HealthComponent healthComponent; public HurtBoxGroup hurtBoxGroup; public HurtBox mainHurtBox; public float radius=1; public Vector3 corePosition { get { return transform.position; } } }
     public class HurtBox : MonoBehaviour { public Collider collider; public HealthComponent healthComponent; }
     public class HurtBoxGroup : MonoBehaviour { public HurtBox[] hurtBoxes; }
     public enum Interactability { Disabled,ConditionsNotMet,Available }
@@ -170,7 +170,7 @@ partial class Checks
     {
         UmbraMenu.UmbraMenu.characterCollected=true; UmbraMenu.UmbraMenu.InGame=true; UmbraMenu.UmbraMenu.navigationToggle=false; UmbraMenu.UmbraMenu.LocalPlayerBody=new CharacterBody(); Run.instance=new Run(); TeleporterInteraction.instance=new TeleporterInteraction();
         var main=UmbraMenu.UmbraMenu.menus[0]; main.AddButtons(new List<Button> { new Button(new NormalButton(main,5,"TELEPORTER",()=>{})) }); var menu=new UmbraMenu.Menus.Teleporter(); UmbraMenu.UmbraMenu.menus[5]=menu;
-        Assert(menu.GetButtons().Count==30 && menu.GetButtons().Count(b=>b.GetAction()!=null)==25,"The complete Teleporter menu must have four stage actions, 21 portals, and five DLC dividers.");
+        Assert(menu.GetButtons().Count==29 && menu.GetButtons().Count(b=>b.GetAction()!=null)==24,"The complete Teleporter menu must have three stage actions, 21 portals, and five DLC dividers.");
         menu.SetEnabled(true); Event.current=new Event { type=EventType.Repaint }; menu.Draw(); Assert(GUI.Viewport.y==0 && GUI.Viewport.y+GUI.Viewport.height<=Screen.height,"The scrollable portal viewport must leave the title fixed and fit on screen.");
         menu.SpawnPortals("blue"); menu.SpawnPortals("gold"); menu.SpawnPortals("cele"); var tele=TeleporterInteraction.instance;
         Assert(tele.Network_shouldAttemptToSpawnShopPortal && tele.Network_shouldAttemptToSpawnGoldshoresPortal && tele.Network_shouldAttemptToSpawnMSPortal,"The three standard portal shortcuts must preserve their teleporter orb/charge behavior.");

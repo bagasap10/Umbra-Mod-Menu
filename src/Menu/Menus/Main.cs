@@ -42,7 +42,8 @@ namespace UmbraMenu.Menus
                     toggleTeleporter,
                     toggleRender,
                     toggleSettings,
-                    unloadMenu
+                    unloadMenu,
+                    new Button(new TogglableButton(this, CheatsMenu.MainButtonId, "CHEATS : OFF", "CHEATS : ON", () => UmbraMenu.cheatsMenu.ToggleMenu(), () => UmbraMenu.cheatsMenu.ToggleMenu()))
                 });
             }
             else
