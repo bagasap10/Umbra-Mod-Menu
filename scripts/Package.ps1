@@ -1,4 +1,4 @@
-param([string]$GameDir, [string]$Version = '3.0.0')
+param([string]$GameDir, [string]$Version = '4.0.1')
 . (Join-Path $PSScriptRoot 'Tools.ps1')
 $suiteRoot = Split-Path $PSScriptRoot -Parent
 & (Join-Path $PSScriptRoot 'Build.ps1') -GameDir $GameDir -Version $Version

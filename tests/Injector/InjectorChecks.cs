@@ -83,12 +83,12 @@ internal static class InjectorChecks
         File.Copy("vendor/SharpMonoInjector/bin/Release/SharpMonoInjector.dll", Path.Combine(bundleDir, "SharpMonoInjector.dll"), true);
         string gameDir = PathFor("fake-game"), managed = Path.Combine(gameDir, "Risk of Rain 2_Data", "Managed"); Directory.CreateDirectory(managed);
         string gameDll = Path.Combine(managed, "RoR2.dll"); File.WriteAllText(gameDll, "compatibility fingerprint fixture");
-        var document = new XmlDocument(); document.LoadXml("<umbra protocol='1' module='" + Guid.NewGuid().ToString("D") + "' version='3.0.0' gameSha256='" + Bundle.Hash(gameDll) + "'/>");
+        var document = new XmlDocument(); document.LoadXml("<umbra protocol='1' module='" + Guid.NewGuid().ToString("D") + "' version='4.0.1' gameSha256='" + Bundle.Hash(gameDll) + "'/>");
         foreach (string name in new[] { "UmbraMenu.dll", "SharpMonoInjector.dll" })
         { var file = document.CreateElement("file"); file.SetAttribute("name", name); file.SetAttribute("sha256", Bundle.Hash(Path.Combine(bundleDir, name))); document.DocumentElement.AppendChild(file); }
         string manifest = Path.Combine(bundleDir, "bundle.xml"); document.Save(manifest);
         var bundle = Bundle.Load(bundleDir); bundle.VerifyGame(Path.Combine(gameDir, "Risk of Rain 2.exe"));
-        Check(bundle.Version == "3.0.0" && File.Exists(bundle.MenuPath), "A complete matching bundle must pass metadata and checksum validation.");
+        Check(bundle.Version == "4.0.1" && File.Exists(bundle.MenuPath), "A complete matching bundle must pass metadata and checksum validation.");
         File.AppendAllText(gameDll, "updated"); Throws<InvalidDataException>(() => bundle.VerifyGame(Path.Combine(gameDir, "Risk of Rain 2.exe")), "A game update must block the mismatched release.");
         string backend = Path.Combine(bundleDir, "SharpMonoInjector.dll"); File.AppendAllText(backend, "changed");
         Throws<InvalidDataException>(() => Bundle.Load(bundleDir), "Modified or mixed dependencies must be rejected before injection.");

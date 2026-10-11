@@ -8,6 +8,11 @@ function Run-Checks {
     $exe = Join-Path $outDir "$Name.exe"
     $arguments = @('/nologo','/langversion:latest','/platform:x64',"/out:$exe")
     $arguments += $References | ForEach-Object { "/r:$_" }
+    if ($Name -eq 'GameChecks') {
+        foreach ($image in Get-ChildItem -LiteralPath (Join-Path $suiteRoot 'src\Menu\Assets\PortalIcons') -Filter '*.png') {
+            $arguments += "/resource:$($image.FullName),UmbraMenu.PortalIcons.$($image.Name)"
+        }
+    }
     $arguments += $Sources | ForEach-Object { Join-Path $suiteRoot $_ }
     Invoke-Checked $csc $arguments
     Invoke-Checked $exe @()
@@ -22,8 +27,8 @@ try {
     $fragment = [IO.File]::ReadAllText((Join-Path $suiteRoot 'tests\Menu\ItemsActions.fragment'))
     [IO.File]::WriteAllText((Join-Path $outDir 'ItemsConstructor.cs'), $itemsSource.Substring(0,$endConstructor) + $fragment)
     Run-Checks 'UiChecks' ($uiSources + (@('MockUnity.cs','IconMock.cs','Checks.cs','ResizeChecks.cs','BackShortcutChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
-    $gameSources = @('CatalogGrouping.cs','CatalogIcons.cs','ItemPacks.cs','PortalCatalog.cs','EspTargets.cs','InventorySafety.cs','Menus\Teleporter.cs','Menus\ItemList.cs','Menus\InventoryItemList.cs','Menus\EquipmentList.cs','Menus\ItemPackList.cs','Menus\ItemPackDetails.cs') | ForEach-Object { "src\Menu\$_" }
-    Run-Checks 'GameChecks' ($uiSources + $gameSources + @('artifacts\tests\ItemsConstructor.cs') + (@('GameMockUnity.cs','GameChecks.cs','GameExtraChecks.cs','GameIconMock.cs','PackChecks.cs','StabilityChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
+    $gameSources = @('CatalogGrouping.cs','Reflections.cs','CatalogIcons.cs','ItemPacks.cs','PortalCatalog.cs','PortalIcons.cs','EspTargets.cs','InventorySafety.cs','Menus\Teleporter.cs','Menus\ItemList.cs','Menus\InventoryItemList.cs','Menus\EquipmentList.cs','Menus\ChestItemList.cs','Menus\ItemPackList.cs','Menus\ItemPackDetails.cs') | ForEach-Object { "src\Menu\$_" }
+    Run-Checks 'GameChecks' ($uiSources + $gameSources + @('artifacts\tests\ItemsConstructor.cs') + (@('GameMockUnity.cs','GameChecks.cs','GameExtraChecks.cs','ChestMock.cs','CatalogSearchChecks.cs','GameIconMock.cs','PackChecks.cs','PortalIconChecks.cs','StabilityChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
     $runtimeSources = @('Loader.cs','SafeRoutine.cs','MenuSettings.cs','Textures.cs','Reflections.cs','InventorySafety.cs') | ForEach-Object { "src\Menu\$_" }
     Run-Checks 'RuntimeChecks' ($runtimeSources + @('tests\Menu\RuntimeMock.cs','tests\Menu\RuntimeChecks.cs')) @('System.Core.dll')
     $backend = Join-Path $suiteRoot 'vendor\SharpMonoInjector\bin\Release\SharpMonoInjector.dll'

@@ -76,7 +76,7 @@ partial class Checks
         var missile=ItemCatalog.FindItemIndex("MoreMissile");var definition=ItemCatalog.Defs[missile];ItemCatalog.Defs.Remove(missile);Root.LocalPlayerInv=new Inventory();
         Assert(!ItemPacks.Give(ItemPacks.All.Single(pack=>pack.Name=="Katyusha"),out _)&&Root.LocalPlayerInv.Counts.Count==0&&Root.LocalPlayerInv.currentEquipmentIndex==EquipmentIndex.None,"Missing DLC entries must fail before granting anything or replacing equipment");ItemCatalog.Defs[missile]=definition;
         Root.InGame=false;Assert(!ItemPacks.Give(ItemPacks.All[0],out _)&&Root.LocalPlayerInv.Counts.Count==0,"Packs must not mutate cached inventory outside a run");Root.InGame=true;Root.LocalPlayerInv=null;Assert(!ItemPacks.Give(ItemPacks.All[0],out _),"Missing inventories must be safe");
-        IconChecks();MenuOrderChecks();StabilityChecks();
+        IconChecks();MenuOrderChecks();PortalPreviews();StabilityChecks();
         Console.WriteLine("PASS: "+assertions+" total catalog, pack, icon, menu, portal and ESP assertions.");
     }
     static void ArmorPlatePackChecks()

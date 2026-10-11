@@ -11,6 +11,9 @@
     <Compile Include="..\Shared\SessionProtocol.cs">
       <Link>SessionProtocol.cs</Link>
     </Compile>
+    <EmbeddedResource Include="Assets\PortalIcons\*.png">
+      <LogicalName>UmbraMenu.PortalIcons.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Assembly-CSharp">
@@ -39,6 +42,10 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(GameManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(GameManagedDir)\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">

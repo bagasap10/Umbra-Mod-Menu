@@ -65,7 +65,7 @@ namespace UmbraMenu
                 GUI.depth = -99;
                 GUI.color = Color.white;
                 GUI.Box(new Rect(left, 8, width, 52), "", UITheme.GroupStyle);
-                GUI.Label(new Rect(left + 2, 9, width - 4, 25), "UMBRA / " + UmbraMenu.VERSION + status, UITheme.Label);
+                GUI.Label(new Rect(left + 2, 9, width - 4, 25), "UMBRA / v" + UmbraMenu.VERSION + " / " + UmbraMenu.DLC_NAME + status, UITheme.Label);
                 GUI.Label(new Rect(left + 2, 32, width - 4, 22), ToggleShortcut + "  |  " + (UmbraMenu.mainMenu.IsEnabled() ? "Close menu" : "Open menu"), UITheme.Hint);
             }
             finally { GUI.depth = previousDepth; GUI.color = previousColor; }
@@ -322,8 +322,8 @@ namespace UmbraMenu
                 GUI.enabled = oldEnabled;
             }
             GUI.EndScrollView();
-            GUI.Label(new Rect(6, window.height - 107, rail - 12, 24), UmbraMenu.VERSION, UITheme.Caption);
-            GUI.Label(new Rect(6, window.height - 84, rail - 12, 22), Loader.devBuild ? "Development build" : Loader.updateAvailable ? "Update available" : "Personal workspace", UITheme.Caption);
+            GUI.Label(new Rect(6, window.height - 107, rail - 12, 24), "v" + UmbraMenu.VERSION, UITheme.Caption);
+            GUI.Label(new Rect(6, window.height - 84, rail - 12, 22), Loader.devBuild ? "Development build" : Loader.updateAvailable ? "Update available" : UmbraMenu.DLC_NAME, UITheme.Caption);
 
             body = new Rect(rail + 24, 105, window.width - rail - 48, window.height - 164);
             if (ActiveMenuId == 0) DrawOverview();
@@ -444,8 +444,17 @@ namespace UmbraMenu
             Rect labelRect = new Rect(actionRect.x, actionRect.y, actionRect.width - badgeWidth - 12, actionRect.height);
             if (button is PickupButton pickup)
             {
-                if (rect.yMax >= visibleRowTop && rect.y <= visibleRowBottom && pickup.TryGetIcon(out Texture icon, out Rect uv))
-                    GUI.DrawTextureWithTexCoords(new Rect(actionRect.x + 8, actionRect.y + 4, 32, 32), icon, uv, true);
+                if (rect.yMax >= visibleRowTop && rect.y <= visibleRowBottom)
+                {
+                    Rect iconRect = new Rect(actionRect.x + 8, actionRect.y + 4, 32, 32);
+                    if (pickup.TryGetIcon(out Texture icon, out Rect uv))
+                        GUI.DrawTextureWithTexCoords(iconRect, icon, uv, true);
+                    else if (!string.IsNullOrEmpty(pickup.MissingIconText))
+                    {
+                        GUI.Box(iconRect, "", UITheme.GroupStyle);
+                        GUI.Label(iconRect, pickup.MissingIconText, UITheme.Badge);
+                    }
+                }
                 labelRect.x += 38;
                 labelRect.width -= 38;
             }

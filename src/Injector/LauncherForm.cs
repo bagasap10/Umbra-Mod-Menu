@@ -136,7 +136,7 @@ namespace UmbraSuite.Injector
         private async Task UpdateSelectedAsync()
         {
             inject.Enabled = false; inject.Text = "Inject menu";
-            packageStatus.Text = bundle == null ? packageError : "Hallowed Concept  /  Verified release " + bundle.Version;
+            packageStatus.Text = bundle == null ? packageError : "Hallowed Concepts  /  Verified release " + bundle.Version;
             var game = games.SelectedItem as GameProcess;
             launch.Enabled = !busy && games.Items.Count == 0;
             if (game == null)

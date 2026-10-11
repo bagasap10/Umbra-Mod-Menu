@@ -1,5 +1,7 @@
 # Run Umbra Suite
 
+**Version 4.0.1 / Hallowed Concepts (DLC#4).** Suite versions use DLC count.feature update.fix numbering.
+
 Extract the full release ZIP and double-click **UmbraInjector.exe**. The launcher does not need a separate injector installation, an arbitrary DLL picker, a manual PID, or a working directory set by a shortcut.
 
 Use **Start game** to ask Steam to launch Risk of Rain 2, or start the game normally. The launcher checks every two seconds. If more than one game process exists, select the one to use. It enables **Inject menu** after the game runtime and matching package are available.
@@ -7,6 +9,12 @@ Use **Start game** to ask Steam to launch Risk of Rain 2, or start the game norm
 Click **Inject menu** once. The UI remains responsive while the helper performs native injection. The menu then waits for the game's catalogs and initializes on the main thread. The launcher confirms **Menu active** after the menu's actual startup, rather than reporting success merely because the DLL was submitted.
 
 **Insert / Numpad 0** toggles the menu; **Numpad 1** returns to the previous page. Existing custom keybinds are retained and the active toggle key is shown after startup. Key capture, search entry and game chat keep their existing input guards. Drag a border/corner to resize; change Glass Opacity in Settings.
+
+The Item Spawn, Remove Items, Equipment Spawn, and Change Chest Item pages have a search field above the list. Type part of the pickup name; matching ignores capitalization and surrounding spaces. **Clear** restores the list. Each page keeps its own query and matching rarity/DLC sections. **Enter / Escape** finishes typing so keyboard navigation can resume.
+
+Change Chest Item locks the nearest unopened chest when the page opens. Its list switches automatically between items and equipment according to the selected chest, preserving the search query. Selecting a result changes that chest's drop. Close and reopen the page to select a different nearby chest. Empty scenes and camera transitions safely skip chest actions.
+
+The Teleporter / Portals page includes embedded wiki thumbnails. A neutral ? icon marks a portal whose photograph is unavailable; its spawn action still works. Images work offline and need no additional image files. Image sources are listed in THIRD_PARTY_NOTICES.md.
 
 ## Troubleshooting
 

@@ -66,7 +66,7 @@ namespace UmbraMenu
             {
                 buttons.Add(new Button(new DividerButton(menu, buttons.Count + 1, GroupTitles[group.Key], new Color32(190, 190, 190, 255), true)));
                 foreach (Definition portal in group)
-                    buttons.Add(new Button(new NormalButton(menu, buttons.Count + 1, "SPAWN " + portal.Name, () => spawn(portal.Key))));
+                    buttons.Add(new Button(new PickupButton(menu, buttons.Count + 1, "SPAWN " + portal.Name, () => spawn(portal.Key), () => PortalIcons.Get(portal), "?")));
             }
         }
     }

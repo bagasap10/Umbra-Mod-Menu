@@ -2,104 +2,85 @@ using System.Collections.Generic;
 using System.Linq;
 using RoR2;
 using UnityEngine;
-using System.Reflection;
 
 namespace UmbraMenu.Menus
 {
     public class ChestItemList : Menu
     {
-        private static readonly IMenu chestItemsList = new ListMenu(14, new Rect(1503, 10, 20, 20), "CHEST ITEMS MENU");
+        private static readonly SearchableListMenu chestItemsList = new SearchableListMenu(14, new Rect(1503, 10, 20, 20),
+            "CHEST ITEMS MENU", "Search item or equipment name...");
 
-        public static List<PurchaseInteraction> purchaseInteractions = new();
         public static List<ChestBehavior> chests = new();
         public static bool onChestsEnable = true;
-        private static bool isClosestChestEquip = false;
-
+        private static bool isClosestChestEquip;
         public static ChestBehavior selectedChest;
+
         public static bool IsClosestChestEquip
         {
-            get
-            {
-                return isClosestChestEquip;
-            }
-
+            get => isClosestChestEquip;
             set
             {
-                bool temp = isClosestChestEquip;
+                if (isClosestChestEquip == value)
+                    return;
+
                 isClosestChestEquip = value;
-                if (temp != isClosestChestEquip)
+                // Retain the query when switching between item and equipment chests.
+                chestItemsList.CurrentScrollPosition = Vector2.zero;
+                if (UmbraMenu.navigationToggle && Navigation.menuIndex == chestItemsList.Id)
                 {
-                    UpdateChestListMenu();
+                    Navigation.buttonIndex = 1;
+                    UmbraMenu.scrolled = false;
                 }
+                UpdateChestListMenu();
             }
         }
 
         public ChestItemList() : base(chestItemsList)
         {
+            ConfigureSearch(_ => RefreshPickups());
             if (UmbraMenu.characterCollected)
             {
-                List<Button> buttons = new();
-
-                for (int i = 0; i < UmbraMenu.items.Count; i++)
-                {
-                    var itemIndex = UmbraMenu.items[i];
-                    ItemDef def = ItemCatalog.GetItemDef(itemIndex);
-                    if (def == null)
-                        continue;
-
-                    string displayName = Language.GetString(def.nameToken);
-                    if (string.IsNullOrEmpty(displayName) || displayName == def.nameToken)
-                        continue; // skip ITEM_XXX_NAME junk
-
-                    void ButtonAction() => SetChestItem(itemIndex);
-                    var tierDef = ItemTierCatalog.GetItemTierDef(def.tier);
-                    Color32 itemColor = ColorCatalog.GetColor(tierDef.colorIndex);
-                    string itemName;
-
-                    if (itemColor.r <= 105 && itemColor.g <= 105 && itemColor.b <= 105)
-                    {
-                        itemName = Util.GenerateColoredString(displayName, new Color32(0, 0, 0, 255));
-                    }
-                    else
-                    {
-                        itemName = Util.GenerateColoredString(displayName, itemColor);
-                    }
-
-                    Button button = new Button(new PickupButton(this, i + 1, itemName, ButtonAction, () => CatalogIcons.Get(def)));
-                    buttons.Add(button);
-                }
-
-                //Original
-                //for (int i = 0; i < UmbraMenu.items.Count; i++)
-                //{
-                //    var itemIndex = UmbraMenu.items[i];
-                //    void ButtonAction() => SetChestItem(itemIndex);
-                //    Color32 itemColor = ColorCatalog.GetColor(ItemCatalog.GetItemDef(itemIndex).colorIndex);
-                //    if (itemColor.r <= 105 && itemColor.g <= 105 && itemColor.b <= 105)
-                //    {
-                //        string itemName = Util.GenerateColoredString(Language.GetString(ItemCatalog.GetItemDef(itemIndex).nameToken), new Color32(0, 0, 0, 255));
-                //        Button button = new Button(new NormalButton(this, i + 1, itemName, ButtonAction));
-                //        buttons.Add(button);
-                //    }
-                //    else
-                //    {
-                //        string itemName = Util.GenerateColoredString(Language.GetString(ItemCatalog.GetItemDef(itemIndex).nameToken), itemColor);
-                //        Button button = new Button(new NormalButton(this, i + 1, itemName, ButtonAction));
-                //        buttons.Add(button);
-                //    }
-                //}
-                AddButtons(buttons);
+                RefreshPickups();
                 SetActivatingButton(Utility.FindButtonById(3, Items.ChestButtonId));
                 SetPrevMenuId(3);
             }
+        }
+
+        private void RefreshPickups()
+        {
+            List<Button> buttons = isClosestChestEquip
+                ? CatalogGrouping.BuildEquipmentButtons(this, UmbraMenu.equipment, SetChestEquipment, SearchText)
+                : CatalogGrouping.BuildItemButtons(this, UmbraMenu.items, SetChestItem, searchText: SearchText);
+            if (buttons.Count == 0)
+            {
+                string message = isClosestChestEquip ? "No equipment matches your search." : "No items match your search.";
+                buttons.Add(new Button(new DividerButton(this, 1, message, new Color32(190, 190, 190, 255), false)));
+            }
+            AddButtons(buttons);
+            if (UmbraMenu.navigationToggle && Navigation.menuIndex == GetId())
+                Navigation.UpdateIndexValues();
+        }
+
+        public static void UpdateChestListMenu()
+        {
+            (UmbraMenu.chestItemListMenu as ChestItemList)?.RefreshPickups();
         }
 
         public override void SetEnabled(bool value)
         {
             if (value != IsEnabled())
             {
-                if (value) { EnableChests(); LockClosestChest(); }
-                else { DisableChests(); selectedChest = null; }
+                if (value)
+                {
+                    EnableChests();
+                    LockClosestChest();
+                    IsClosestChestEquip = CheckClosestChestEquip();
+                    RefreshPickups();
+                }
+                else
+                {
+                    DisableChests();
+                }
                 Items.chestItemList = value;
             }
             base.SetEnabled(value);
@@ -112,7 +93,7 @@ namespace UmbraMenu.Menus
 
         public static ChestBehavior GetSelectedChest()
         {
-            if (selectedChest)
+            if (selectedChest && selectedChest.currentPickup.pickupIndex != PickupIndex.none)
                 return selectedChest;
 
             selectedChest = FindClosestChest();
@@ -132,294 +113,118 @@ namespace UmbraMenu.Menus
         {
             isClosestChestEquip = false;
             DisableChests();
+            Items.chestItemList = false;
             base.Reset();
         }
 
         public static void EnableChests()
         {
-            if (onChestsEnable)
-            {
-                DumpInteractables(null);
-                SceneDirector.onPostPopulateSceneServer += DumpInteractables;
-                onChestsEnable = false;
-            }
-            else
-            {
+            if (!onChestsEnable)
                 return;
-            }
+
+            DumpInteractables(null);
+            SceneDirector.onPostPopulateSceneServer += DumpInteractables;
+            onChestsEnable = false;
         }
 
         public static void DisableChests()
         {
             if (!onChestsEnable)
-            {
                 SceneDirector.onPostPopulateSceneServer -= DumpInteractables;
-                onChestsEnable = true;
-            }
-            else
-            {
-                return;
-            }
+            onChestsEnable = true;
+            selectedChest = null;
+            chests.Clear();
         }
 
         private static void DumpInteractables(SceneDirector obj)
         {
-            chests = UnityEngine.Object.FindObjectsOfType<ChestBehavior>().ToList();
+            selectedChest = null;
+            chests = Object.FindObjectsOfType<ChestBehavior>().ToList();
         }
 
         public static ChestBehavior FindClosestChest()
         {
-            Dictionary<float, ChestBehavior> chestsWithDistance = new Dictionary<float, ChestBehavior>();
+            Camera camera = Camera.main;
+            if (!camera)
+                return null;
 
-            foreach (var chest in chests)
+            ChestBehavior closest = null;
+            float leastDistance = float.PositiveInfinity;
+            Vector3 origin = camera.transform.position;
+            foreach (ChestBehavior chest in chests)
             {
-                if (chest != null)
+                if (!chest || chest.currentPickup.pickupIndex == PickupIndex.none)
+                    continue;
+
+                float distance = (origin - chest.transform.position).sqrMagnitude;
+                if (distance < leastDistance)
                 {
-                    var uniquePickup = chest.currentPickup;          // UniquePickup
-                    if (uniquePickup.pickupIndex != PickupIndex.none)
-                    {
-                        float distanceToChest = Vector3.Distance(Camera.main.transform.position, chest.transform.position);
-                        chestsWithDistance[distanceToChest] = chest;
-                    }
+                    leastDistance = distance;
+                    closest = chest;
                 }
             }
-
-            //foreach (var chest in chests)
-            //{
-            //    if (chest && chest.dropPickup != null)
-            //    {
-            //        float distanceToChest = Vector3.Distance(Camera.main.transform.position, chest.transform.position);
-            //        chestsWithDistance.Add(distanceToChest, chest);
-            //    }
-            //}
-            var keys = chestsWithDistance.Keys.ToList();
-            keys.Sort();
-            float leastDistance = keys[0];
-            chestsWithDistance.TryGetValue(leastDistance, out ChestBehavior closestChest);
-            return closestChest;
+            return closest;
         }
 
         public static void RenderClosestChest()
         {
             ChestBehavior chest = GetSelectedChest();
-            if (!chest)
+            Camera camera = Camera.main;
+            if (!chest || !camera)
                 return;
 
-            Vector3 chestPosition = Camera.main.WorldToScreenPoint(chest.transform.position);
-            var chestBoundingVector = new Vector3(chestPosition.x, chestPosition.y, chestPosition.z);
-            if (chestBoundingVector.z > 0.01f)
+            var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
+            if (pickupDef == null)
+                return;
+
+            Vector3 chestPosition = camera.WorldToScreenPoint(chest.transform.position);
+            if (chestPosition.z > 0.01f)
             {
-                var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
-                string dropNameColored = Util.GenerateColoredString(
-                    Language.GetString(pickupDef.nameToken),
-                    pickupDef.baseColor
+                string dropNameColored = Util.GenerateColoredString(Language.GetString(pickupDef.nameToken), pickupDef.baseColor);
+                float distanceToChest = Vector3.Distance(camera.transform.position, chest.transform.position);
+                float size = Mathf.Min(distanceToChest, 125f);
+
+                GUI.Label(
+                    new Rect(chestPosition.x - 50f, Screen.height - chestPosition.y + 35f, 100f, 50f),
+                    Render.renderInteractables ? "Selected Chest" : $"Selected Chest\n{dropNameColored}",
+                    Styles.SelectedChestStyle
                 );
-
-                float distanceToChest = Vector3.Distance(Camera.main.transform.position, chest.transform.position);
-                float width = 100f * (distanceToChest / 100f);
-                if (width > 125f) width = 125f;
-
-                float height = 100f * (distanceToChest / 100f);
-                if (height > 125f) height = 125f;
-
-                if (Render.renderInteractables)
-                {
-                    GUI.Label(
-                        new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f),
-                        $"Selected Chest",
-                        Styles.SelectedChestStyle
-                    );
-                }
-                else
-                {
-                    GUI.Label(
-                        new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f),
-                        $"Selected Chest\n{dropNameColored}",
-                        Styles.SelectedChestStyle
-                    );
-                }
-
-                ESPHelper.DrawBox(
-                    chestBoundingVector.x - width / 2f,
-                    (float)Screen.height - chestBoundingVector.y - height / 2f,
-                    width,
-                    height,
-                    new Color32(17, 204, 238, 255)
-                );
+                ESPHelper.DrawBox(chestPosition.x - size / 2f, Screen.height - chestPosition.y - size / 2f,
+                    size, size, new Color32(17, 204, 238, 255));
             }
         }
 
-        //public static void RenderClosestChest()
-        //{
-        //    ChestBehavior chest = FindClosestChest();
-        //    Vector3 chestPosition = Camera.main.WorldToScreenPoint(chest.transform.position);
-        //    var chestBoundingVector = new Vector3(chestPosition.x, chestPosition.y, chestPosition.z);
-        //    if (chestBoundingVector.z > 0.01)
-        //    {
-
-        //        var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
-
-        //        string dropNameColored = Util.GenerateColoredString(Language.GetString(pickupDef.nameToken),pickupDef.baseColor);
-
-        //        //string dropNameColored = Util.GenerateColoredString(Language.GetString(PickupCatalog.GetPickupDef(chest.dropPickup).nameToken), PickupCatalog.GetPickupDef(chest.dropPickup).baseColor);
-        //        float distanceToChest = Vector3.Distance(Camera.main.transform.position, FindClosestChest().transform.position);
-        //        float width = 100f * (distanceToChest / 100);
-        //        if (width > 125)
-        //        {
-        //            width = 125;
-        //        }
-        //        float height = 100f * (distanceToChest / 100);
-        //        if (height > 125)
-        //        {
-        //            height = 125;
-        //        }
-
-        //        if (Render.renderInteractables)
-        //        {
-        //            GUI.Label(new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f), $"Selected Chest", Styles.SelectedChestStyle);
-        //        }
-        //        else
-        //        {
-        //            GUI.Label(new Rect(chestBoundingVector.x - 50f, (float)Screen.height - chestBoundingVector.y + 35f, 100f, 50f), $"Selected Chest\n{dropNameColored}", Styles.SelectedChestStyle);
-        //        }
-        //        ESPHelper.DrawBox(chestBoundingVector.x - width / 2, (float)Screen.height - chestBoundingVector.y - height / 2, width, height, new Color32(17, 204, 238, 255));
-        //    }
-        //}
-
-        //public static void SetChestItem(ItemIndex itemIndex)
-        //{
-        //    var chest = GetSelectedChest();
-
-        //    //var chest = FindClosestChest();
-        //    PickupIndex newPickupIndex = PickupCatalog.FindPickupIndex(itemIndex);
-        //    Traverse.Create(chest).Field("<dropPickup>k__BackingField").SetValue(newPickupIndex);
-        //}
-
         public static void SetChestItem(ItemIndex itemIndex)
         {
-            var chest = selectedChest != null ? selectedChest : FindClosestChest();
-            if (!chest) return;
-
-            PickupIndex pickupIndex = PickupCatalog.FindPickupIndex(itemIndex);
-            UniquePickup uniquePickup = new UniquePickup(pickupIndex);
-
-            // currentPickup is read-only, so set its backing field via cached reflection
-            chest.SetField("<currentPickup>k__BackingField", uniquePickup);
+            SetChestPickup(PickupCatalog.FindPickupIndex(itemIndex));
         }
-
-        //public static void SetChestEquipment(EquipmentIndex equipmentIndex)
-        //{
-        //    var chest = GetSelectedChest();
-
-        //    //var chest = FindClosestChest();
-        //    PickupIndex newPickupIndex = PickupCatalog.FindPickupIndex(equipmentIndex);
-        //    Traverse.Create(chest).Field("<dropPickup>k__BackingField").SetValue(newPickupIndex);
-        //}
 
         public static void SetChestEquipment(EquipmentIndex equipmentIndex)
         {
-            var chest = selectedChest != null ? selectedChest : FindClosestChest();
-            if (!chest) return;
+            SetChestPickup(PickupCatalog.FindPickupIndex(equipmentIndex));
+        }
 
-            PickupIndex pickupIndex = PickupCatalog.FindPickupIndex(equipmentIndex);
-            UniquePickup uniquePickup = new UniquePickup(pickupIndex);
+        private static void SetChestPickup(PickupIndex pickupIndex)
+        {
+            if (pickupIndex == PickupIndex.none)
+                return;
 
-            chest.SetField("<currentPickup>k__BackingField", uniquePickup);
+            var chest = GetSelectedChest();
+            if (!chest)
+                return;
+
+            // currentPickup is read-only; use the existing cached reflection path.
+            chest.SetField("<currentPickup>k__BackingField", new UniquePickup(pickupIndex));
         }
 
         public static bool CheckClosestChestEquip()
         {
             var chest = GetSelectedChest();
+            if (!chest)
+                return false;
 
-            //var chest = FindClosestChest();
             var pickupDef = PickupCatalog.GetPickupDef(chest.currentPickup.pickupIndex);
-            var equipmentDrop = pickupDef.equipmentIndex;
-            //var equipmentDrop = PickupCatalog.GetPickupDef(chest.dropPickup).equipmentIndex;
-            if (UmbraMenu.equipment.Contains(equipmentDrop) && equipmentDrop != EquipmentIndex.None)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static void UpdateChestListMenu()
-        {
-            List<Button> buttons = new();
-            if (isClosestChestEquip)
-            {
-                for (int i = 0; i < UmbraMenu.equipment.Count; i++)
-                {
-                    var equipmentIndex = UmbraMenu.equipment[i];
-                    if (equipmentIndex != EquipmentIndex.None)
-                    {
-                        void ButtonAction() => SetChestEquipment(equipmentIndex);
-                        if (equipmentIndex != EquipmentCatalog.FindEquipmentIndex("AffixYellow"))
-                        {
-                            Color32 equipColor = ColorCatalog.GetColor(EquipmentCatalog.GetEquipmentDef(equipmentIndex).colorIndex);
-                            string equipmentName = Util.GenerateColoredString(Language.GetString(EquipmentCatalog.GetEquipmentDef(equipmentIndex).nameToken), ColorCatalog.GetColor(EquipmentCatalog.GetEquipmentDef(equipmentIndex).colorIndex));
-                            Button button = new Button(new PickupButton(UmbraMenu.chestItemListMenu, i + 1, equipmentName, ButtonAction, () => CatalogIcons.Get(EquipmentCatalog.GetEquipmentDef(equipmentIndex))));
-                            buttons.Add(button);
-                        }
-                        else
-                        {
-                            string equipmentName = Util.GenerateColoredString(equipmentIndex.ToString(), ColorCatalog.GetColor(ColorCatalog.ColorIndex.Equipment));
-                            Button button = new Button(new PickupButton(UmbraMenu.chestItemListMenu, i + 1, equipmentName, ButtonAction, () => CatalogIcons.Get(EquipmentCatalog.GetEquipmentDef(equipmentIndex))));
-                            buttons.Add(button);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < UmbraMenu.items.Count; i++)
-                {
-                    var itemIndex = UmbraMenu.items[i];
-                    ItemDef def = ItemCatalog.GetItemDef(itemIndex);
-                    if (def == null)
-                        continue;
-
-                    string displayName = Language.GetString(def.nameToken);
-                    if (string.IsNullOrEmpty(displayName) || displayName == def.nameToken)
-                        continue; // skip debug/unlocalized
-
-                    void ButtonAction() => SetChestItem(itemIndex);
-                    var tierDef = ItemTierCatalog.GetItemTierDef(def.tier);
-                    Color32 itemColor = ColorCatalog.GetColor(tierDef.colorIndex);
-                    string itemName;
-
-                    if (itemColor.r <= 105 && itemColor.g <= 105 && itemColor.b <= 105)
-                    {
-                        itemName = Util.GenerateColoredString(displayName, new Color32(0, 0, 0, 255));
-                    }
-                    else
-                    {
-                        itemName = Util.GenerateColoredString(displayName, itemColor);
-                    }
-
-                    Button button = new Button(new PickupButton(UmbraMenu.chestItemListMenu, i + 1, itemName, ButtonAction, () => CatalogIcons.Get(def)));
-                    buttons.Add(button);
-
-                    //Original
-                    //for (int i = 0; i < UmbraMenu.items.Count; i++)
-                    //{
-                    //var itemIndex = UmbraMenu.items[i];
-                    //void ButtonAction() => SetChestItem(itemIndex);
-                    //Color32 itemColor = ColorCatalog.GetColor(ItemCatalog.GetItemDef(itemIndex).colorIndex);
-                    //if (itemColor.r <= 105 && itemColor.g <= 105 && itemColor.b <= 105)
-                    //{
-                    //    string itemName = Util.GenerateColoredString(Language.GetString(ItemCatalog.GetItemDef(itemIndex).nameToken), new Color32(0, 0, 0, 255));
-                    //    Button button = new Button(new NormalButton(UmbraMenu.chestItemListMenu, i + 1, itemName, ButtonAction));
-                    //    buttons.Add(button);
-                    //}
-                    //else
-                    //{
-                    //    string itemName = Util.GenerateColoredString(Language.GetString(ItemCatalog.GetItemDef(itemIndex).nameToken), itemColor);
-                    //    Button button = new Button(new NormalButton(UmbraMenu.chestItemListMenu, i + 1, itemName, ButtonAction));
-                    //    buttons.Add(button);
-                    //}
-                }
-            }
-            UmbraMenu.chestItemListMenu.AddButtons(buttons);
+            return pickupDef != null && pickupDef.equipmentIndex != EquipmentIndex.None;
         }
     }
 }

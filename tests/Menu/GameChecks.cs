@@ -38,9 +38,9 @@ namespace RoR2
 }
 namespace UmbraMenu
 {
-    public static class UmbraMenu { public static List<Menu> menus=new List<Menu>(); public static List<ItemIndex> items=new List<ItemIndex>();public static List<EquipmentIndex> equipment=new List<EquipmentIndex>();public static global::UmbraMenu.Menus.InventoryItemList inventoryItemListMenu; public const string VERSION="1.0.4"; public static bool AllowNavigation=true; public static bool forceFullModMenu,listenForKeybind,chatOpen; public static Menu mainMenu; public static Dictionary<string,Keybind> keybindDict=new Dictionary<string,Keybind>(); public static bool navigationToggle,lowResolutionMonitor,scrolled,characterCollected,InGame=true; public static int previousMenuOpen; public static float Width=350,WindowWidth=680,WindowHeight=560,GlassOpacity=.62f; public static Inventory LocalPlayerInv; public static CharacterBody LocalPlayerBody; public static bool InGameCheck() { return InGame; } public static void GetCharacter() {} }
+    public static class UmbraMenu { public static List<Menu> menus=new List<Menu>(); public static List<ItemIndex> items=new List<ItemIndex>();public static List<EquipmentIndex> equipment=new List<EquipmentIndex>();public static global::UmbraMenu.Menus.InventoryItemList inventoryItemListMenu; public static Menu chestItemListMenu; public const string VERSION="4.0.1"; public const string DLC_NAME="Hallowed Concepts"; public static bool AllowNavigation=true; public static bool forceFullModMenu,listenForKeybind,chatOpen; public static Menu mainMenu; public static Dictionary<string,Keybind> keybindDict=new Dictionary<string,Keybind>(); public static bool navigationToggle,lowResolutionMonitor,scrolled,characterCollected,InGame=true; public static int previousMenuOpen; public static float Width=350,WindowWidth=680,WindowHeight=560,GlassOpacity=.62f; public static Inventory LocalPlayerInv; public static CharacterBody LocalPlayerBody; public static bool InGameCheck() { return InGame; } public static void GetCharacter() {} }
     public static class Utility { public static void SaveSettings(){} public static Button FindButtonById(int menuId,int buttonId) { return UmbraMenu.menus[menuId].GetButtons().First(button=>button.GetId()==buttonId); } }
-    public static class Styles { public static GUIStyle OnStyle=new GUIStyle(),OffStyle=new GUIStyle(); public static GUIStyle LabelStyle=new GUIStyle(),MainBgStyle=new GUIStyle(),BtnStyle=new GUIStyle(),HighlightBtnStyle=new GUIStyle(),TitleStyle=new GUIStyle(),CornerStyle=new GUIStyle(); }
+    public static class Styles { public static GUIStyle OnStyle=new GUIStyle(),OffStyle=new GUIStyle(); public static GUIStyle SelectedChestStyle=new GUIStyle(); public static GUIStyle LabelStyle=new GUIStyle(),MainBgStyle=new GUIStyle(),BtnStyle=new GUIStyle(),HighlightBtnStyle=new GUIStyle(),TitleStyle=new GUIStyle(),CornerStyle=new GUIStyle(); }
 }
 
 partial class Checks
@@ -130,6 +130,7 @@ partial class Checks
         InventoryChecks();
         SearchChecks();
         PortalChecks(); EspChecks(); PortalSpawnChecks();
+        CatalogSearchChecks();
         Console.WriteLine("PASS: "+assertions+" assertions covering grouped portals, verified asset keys, async/network spawning, enemy discovery, projected ESP boxes, DLC interactables, and previous item menus.");
     }
 

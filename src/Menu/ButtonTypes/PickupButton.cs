@@ -4,19 +4,20 @@ using UnityEngine.Sprites;
 
 namespace UmbraMenu
 {
-    // The sprite comes from the same catalog definition as the row's action.
+    // The sprite is resolved for the exact pickup or portal used by this row's action.
     internal sealed class PickupButton : NormalButton
     {
         private readonly Func<Sprite> resolveIcon;
         private Sprite cachedSprite;
         private Texture icon;
         private Rect iconUV;
+        internal string MissingIconText { get; }
 
         public PickupButton(Menu menu, int position, string text, Action action, Sprite sprite)
             : this(menu, position, text, action, () => sprite) { }
 
-        public PickupButton(Menu menu, int position, string text, Action action, Func<Sprite> resolveIcon)
-            : base(menu, position, text, action) { this.resolveIcon = resolveIcon; }
+        public PickupButton(Menu menu, int position, string text, Action action, Func<Sprite> resolveIcon, string missingIconText = null)
+            : base(menu, position, text, action) { this.resolveIcon = resolveIcon; MissingIconText = missingIconText; }
 
         public bool TryGetIcon(out Texture texture, out Rect uvRect)
         {

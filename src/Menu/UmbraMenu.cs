@@ -12,7 +12,8 @@ namespace UmbraMenu
     {
         public const string
             NAME = "U M B R A",
-            VERSION = "Hallowed Concept";
+            VERSION = "4.0.1",
+            DLC_NAME = "Hallowed Concepts";
 
 
 
@@ -195,9 +196,11 @@ namespace UmbraMenu
             SceneManager.activeSceneChanged -= OnSceneLoaded;
             CleanUp(Menus.Render.DisableInteractables);
             CleanUp(Menus.SpawnList.DisableSpawnList);
+            CleanUp(Menus.ChestItemList.DisableChests);
             Menus.Spawn.spawnedObjects.Clear();
             CleanUp(Menus.Teleporter.ReleaseAssets);
             CleanUp(CatalogIcons.Release);
+            CleanUp(PortalIcons.Release);
             CleanUp(MenuUI.Release);
             CleanUp(UITheme.Release);
             CleanUp(Styles.Release);

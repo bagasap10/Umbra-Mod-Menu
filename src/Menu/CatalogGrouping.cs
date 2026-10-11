@@ -104,8 +104,9 @@ namespace UmbraMenu
             return BuildButtons(menu, entries);
         }
 
-        public static List<Button> BuildEquipmentButtons(Menu menu, IEnumerable<EquipmentIndex> equipmentIndices, Action<EquipmentIndex> giveEquipment)
+        public static List<Button> BuildEquipmentButtons(Menu menu, IEnumerable<EquipmentIndex> equipmentIndices, Action<EquipmentIndex> giveEquipment, string searchText = "")
         {
+            string query = (searchText ?? "").Trim();
             List<Entry> entries = new List<Entry>();
             foreach (EquipmentIndex equipmentIndex in equipmentIndices)
             {
@@ -116,6 +117,8 @@ namespace UmbraMenu
                 string displayName = Language.GetString(def.nameToken);
                 if (string.IsNullOrEmpty(displayName) || displayName == def.nameToken)
                     displayName = def.name;
+                if (string.IsNullOrEmpty(displayName) || (query.Length > 0 && displayName.IndexOf(query, StringComparison.CurrentCultureIgnoreCase) < 0))
+                    continue;
 
                 // Lunar elite aspects belong with the other elite equipment.
                 Group rarity = EliteCatalog.GetEliteDefFromEquipmentIndex(equipmentIndex) != null

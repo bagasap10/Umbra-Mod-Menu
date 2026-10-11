@@ -1,0 +1,177 @@
+[
+  {
+    "Key": "blue",
+    "File": "Blue Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/6/63/Blue_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 296215,
+    "OriginalSha256": "BEC1402FC62FBA4F210FBEBA103A138371181771E7BBB5DF0082A01C375130C1",
+    "ThumbnailSha256": "81B05A13E6912D3B1A47F7A3ABE56ECF333AF79C23A4578CE20903EBBF946494"
+  },
+  {
+    "Key": "cele",
+    "File": "Celestial Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/f/f7/Celestial_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 351793,
+    "OriginalSha256": "0FA435C68A2B66BE3990990061057FF9E36FA98C69F4FF4625030C8B81A2F1C4",
+    "ThumbnailSha256": "342BD8F7739CAF141DDBAE6ECD175A88D7FE79B9BE8F988440FB2AC6B007A028"
+  },
+  {
+    "Key": "gold",
+    "File": "Gold Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/0/01/Gold_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 576356,
+    "OriginalSha256": "D447587592453EF79FFC8DD09E5541B82FE114FF70BD1FADA9D4344BDADBBDDA",
+    "ThumbnailSha256": "7F88DBC42DDCCA6DE1732ADDC20CE2164E39AEC0F071FAE2DAB0066BAD9FC0E4"
+  },
+  {
+    "Key": "artifact",
+    "File": "Artifact Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/a/a1/Artifact_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 604830,
+    "OriginalSha256": "291C3C39BD5A2F9060102F466393C0CDF805E5C30080BE56AD63C95FB7711678",
+    "ThumbnailSha256": "826315175E2794D42A273424AF0BBFFE2A88F4CE7111247123175C679731ECEA"
+  },
+  {
+    "Key": "null",
+    "File": "Null Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/5/56/Null_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 572587,
+    "OriginalSha256": "F62A2C69D15B7ECA41EF0D869A094DFA3C7A5DE232302103732EC780EDF9AE63",
+    "ThumbnailSha256": "9F49C844B2E481A716B0CF0CBA9AA8332AFFFD17184752E4F177168BE12E1B79"
+  },
+  {
+    "Key": "void",
+    "File": "Void Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/3/36/Void_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 668000,
+    "OriginalSha256": "8C84B6EAEA768D6EB8F5E3A29A50DB43187ACBC2B1CBCAAC061B9285EA1C333E",
+    "ThumbnailSha256": "4EC9D0A0F93B2F15B98136A1139E78D2127F23CD57C81B4D02DEE0D8B6DF9533"
+  },
+  {
+    "Key": "deepvoid",
+    "File": "Deep Void Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/d/d3/Deep_Void_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 682286,
+    "OriginalSha256": "2D30BF824B6ECBC7A6C9453C62B25A496C050AC075E061C355434420603C4380",
+    "ThumbnailSha256": "1BCBF6E98F014D2506EE9B81818BF6534191CB905F0B5C48DE768979418B2CAD"
+  },
+  {
+    "Key": "infinite",
+    "File": "Infinite Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/2/28/Infinite_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 462349,
+    "OriginalSha256": "D2685F28537DDC5FBBDC731A8D08C1232954D2ED198F089EEC2894B8921EF9E0",
+    "ThumbnailSha256": "B3483E74C136F838B56FA068E7888BEB840617235B5E1B5E808AD94B9F583690"
+  },
+  {
+    "Key": "green",
+    "File": "Green Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/a/a4/Green_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 573887,
+    "OriginalSha256": "AABA3D4D708AB758AFF9F80535289D453B54EE41188E2E751284FDAFA900840C",
+    "ThumbnailSha256": "93AA47B7E6859A57F1E6176C1001EBE9EDA43896CE18FAF75B548D1963AAE2AF"
+  },
+  {
+    "Key": "destination",
+    "File": "Destination Portal (icon).png",
+    "Url": "https://riskofrain2.wiki.gg/images/7/7c/Destination_Portal_%28icon%29.png",
+    "Success": true,
+    "Bytes": 517343,
+    "OriginalSha256": "A7AAD983D472B818ECBEACCE6EE50175972BB11E4BA0FF89ED9D66621934ED73",
+    "ThumbnailSha256": "27FE5F4864EC43BD4AD2DA9400D48671B8AB59A138BB631FAE6B48BF0FB6BB18"
+  },
+  {
+    "Key": "virtual",
+    "File": "Virtual Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/8/8c/Virtual_Portal.png",
+    "Success": true,
+    "Bytes": 926038,
+    "OriginalSha256": "4DBD58461C088625D4626187FEF6D2BFB91C7717E2951E2DB9916F45646A3F59",
+    "ThumbnailSha256": "7B3BF4DD42FCE3C2D553CA89184E20613D62180FC64C9C2687FBC04272E87A9F"
+  },
+  {
+    "Key": "encrypted",
+    "File": "Encrypted Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/c/ce/Encrypted_Portal.png",
+    "Success": true,
+    "Bytes": 783441,
+    "OriginalSha256": "43C463F5172C8DB38FFE634D0D3E083DBC8D95061772B9815621DBD1CBF694BD",
+    "ThumbnailSha256": "676851834E83A3A240FF70772A6A0349C47C1C9CC156549840664E217015C015"
+  },
+  {
+    "Key": "decrypted",
+    "File": "Decrypted Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/2/2b/Decrypted_Portal.png",
+    "Success": true,
+    "Bytes": 1180937,
+    "OriginalSha256": "2093BC18C5FC737B7E05404E85E97C2FFDD8D3E3CB49DD9D360AFFEC6707D2A1",
+    "ThumbnailSha256": "F091C53F964DA6D01D8A0CAF964BADC29111331CE14A2FD7F3628EC8B8A7FEB7"
+  },
+  {
+    "Key": "mainline",
+    "File": "Mainline Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/4/4a/Mainline_Portal.png",
+    "Success": true,
+    "Bytes": 881258,
+    "OriginalSha256": "E604B88448147615F9FE1264CF84D73A30150171AF833751563DFB34AF4D3684",
+    "ThumbnailSha256": "587ABAD7BCF29AA265CB2113F1A4F3C0F526BE005ACF8DAD7BD0142971BACFC7"
+  },
+  {
+    "Key": "ritual",
+    "File": "Ritual Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/7/7f/Ritual_Portal.png",
+    "Success": false,
+    "Error": "Response status code does not indicate success: 404 (Not Found)."
+  },
+  {
+    "Key": "mortal",
+    "File": "Mortal Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/7/76/Mortal_Portal.png",
+    "Success": false,
+    "Error": "Response status code does not indicate success: 404 (Not Found)."
+  },
+  {
+    "Key": "veil",
+    "File": "Veil of Memory.png",
+    "Url": "https://riskofrain2.wiki.gg/images/7/73/Veil_of_Memory.png",
+    "Success": false,
+    "Error": "Response status code does not indicate success: 404 (Not Found)."
+  },
+  {
+    "Key": "anima",
+    "File": "Anima Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/b/b3/Anima_Portal.png",
+    "Success": false,
+    "Error": "Response status code does not indicate success: 404 (Not Found)."
+  },
+  {
+    "Key": "animaexit",
+    "File": "Anima Exit Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/8/86/Anima_Exit_Portal.png",
+    "Success": false,
+    "Error": "Response status code does not indicate success: 404 (Not Found)."
+  },
+  {
+    "Key": "solutional",
+    "File": "Solutional Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/b/bc/Solutional_Portal.png",
+    "Success": false,
+    "Error": "Response status code does not indicate success: 404 (Not Found)."
+  },
+  {
+    "Key": "voidoutro",
+    "File": "Void Outro Portal.png",
+    "Url": "https://riskofrain2.wiki.gg/images/9/95/Void_Outro_Portal.png",
+    "Success": false,
+    "Error": "Response status code does not indicate success: 404 (Not Found)."
+  }
+]

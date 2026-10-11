@@ -31,13 +31,14 @@ A same-build clean unload can be reloaded. An active menu, different build, star
 | Clear inventory | Repeated ally scans inside each item removal | One inventory pass and one ally scan |
 | Settings | Positional parsing, broken keys/dimensions could fail startup | Named-field parsing, defaults per field, enum/finite-number validation and atomic saves |
 | Feature errors | One failure could interrupt the whole update every frame | Per-feature managed guard, two-second backoff, pause after three consecutive failures |
+| Chest selection | Empty distance lists, stale targets and scene subscriptions | Single-pass nearest valid chest lookup, transition guards, target/subscription cleanup on close/reset/unload |
 | Item counts | Unbounded roll work and integer wraparound | Bounded click quantities; overflow checks; pack validation before mutation |
 
 This is a focused refactor. The original menu's feature classes remain recognizable to keep behavior reviewable; a full rewrite of every gameplay function would increase regression risk without evidence that it is needed. Public menu/button IDs and loader entry points remain stable.
 
 ## Validation and limits
 
-`scripts/Test.ps1` compiles production UI/catalog/portal/pack code against small game/Unity stand-ins. It checks grouping, exact sprite atlas coordinates, item/removal search, pack recipes, navigation, resizing, portal completion/state changes, projected ESP bounds, cache limits, overflow rejection and managed action failures.
+`scripts/Test.ps1` compiles production UI/catalog/portal/pack code against small game/Unity stand-ins. It checks grouping, exact sprite atlas coordinates, item/removal/equipment/chest search, locked chest targeting and empty-scene handling, pack recipes, navigation, resizing, portal completion/state changes, projected ESP bounds, cache limits, overflow rejection and managed action failures.
 
 Separate checks compile the production loader/settings/routine/texture/reflection code to test deferred main-thread initialization, catalog readiness, duplicate lifecycle calls, deferred destruction, component failure, timeout subscription cleanup, failure backoff, settings recovery and resource release. These are lifecycle models, not a substitute for Unity's runtime.
 

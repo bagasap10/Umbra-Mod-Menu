@@ -1,6 +1,6 @@
-param([string]$GameDir, [string]$Version = '3.0.0')
+param([string]$GameDir, [string]$Version = '4.0.1')
 . (Join-Path $PSScriptRoot 'Tools.ps1')
-if ($Version -notmatch '^\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$') { throw 'Use a semantic version, for example 2.0.0.' }
+if ($Version -notmatch '^\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$') { throw 'Use a semantic version, for example 4.0.1.' }
 $suiteRoot = Split-Path $PSScriptRoot -Parent
 $GameDir = Find-GameDirectory $GameDir
 $msbuild = Find-MSBuild

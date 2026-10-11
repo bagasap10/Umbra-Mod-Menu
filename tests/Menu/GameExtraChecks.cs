@@ -16,7 +16,7 @@ namespace UnityEngine
         public bool Destroyed;
         public static implicit operator bool(Object value) { return value!=null && !value.Destroyed; }
         public static bool operator !(Object value) { return !(bool)value; }
-        public static T[] FindObjectsOfType<T>() { return new T[0]; }
+        public static Object[] SceneObjects = new Object[0]; public static T[] FindObjectsOfType<T>() { return SceneObjects.OfType<T>().ToArray(); }
         public static GameObject Instantiate(GameObject prefab,Vector3 position,Quaternion rotation) { var instance=new GameObject(prefab.name+"(Clone)"); instance.Components.AddRange(prefab.Components); instance.transform.position=position; return instance; }
     }
     public class Transform : Object { public Vector3 position; }
@@ -34,7 +34,7 @@ namespace UnityEngine
     }
     public struct Vector3
     {
-        public float x,y,z; public Vector3(float x,float y,float z) { this.x=x; this.y=y; this.z=z; } public static Vector3 one { get { return new Vector3(1,1,1); } }
+        public float x,y,z; public Vector3(float x,float y,float z) { this.x=x; this.y=y; this.z=z; } public float sqrMagnitude => x*x+y*y+z*z; public static float Distance(Vector3 a,Vector3 b) => (float)Math.Sqrt((a-b).sqrMagnitude); public static Vector3 one { get { return new Vector3(1,1,1); } }
         public static Vector3 operator +(Vector3 a,Vector3 b) { return new Vector3(a.x+b.x,a.y+b.y,a.z+b.z); }
         public static Vector3 operator -(Vector3 a,Vector3 b) { return new Vector3(a.x-b.x,a.y-b.y,a.z-b.z); }
         public static Vector3 operator *(Vector3 a,float b) { return new Vector3(a.x*b,a.y*b,a.z*b); }
@@ -48,7 +48,7 @@ namespace UnityEngine
     public class Collider : MonoBehaviour { public bool enabled=true; public Bounds bounds; }
     public class Camera : Object
     {
-        public Transform transform=new Transform(); public float nearClipPlane=0.1f; public float FocalLength=600;
+        public static Camera main; public Transform transform=new Transform(); public float nearClipPlane=0.1f; public float FocalLength=600;
         public Vector3 WorldToScreenPoint(Vector3 world) { var p=world-transform.position; return new Vector3(Screen.width*0.5f+FocalLength*p.x/p.z,Screen.height*0.5f+FocalLength*p.y/p.z,p.z); }
     }
 
@@ -129,6 +129,7 @@ partial class Checks
         Assert(Navigation.buttonIndex==6,"Portal keyboard navigation must skip the DLC divider.");
         int initial=calls.Count; Navigation.PressBtn(5,5); Assert(calls.Count==initial,"DLC dividers must remain nonclickable through keyboard navigation.");
         UmbraMenu.UmbraMenu.navigationToggle=false;
+        PortalIconChecks(rows);
     }
     static CharacterBody Body(TeamIndex team,bool alive=true) { var body=new CharacterBody { teamComponent=new TeamComponent { teamIndex=team },healthComponent=new HealthComponent { alive=alive } }; CharacterBody.readOnlyInstancesList.Add(body); return body; }
     static void EspChecks()
