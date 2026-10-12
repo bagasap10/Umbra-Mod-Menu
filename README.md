@@ -38,7 +38,7 @@ Outputs:
 - `artifacts/SHA256SUMS.txt`: package checksums.
 - `artifacts/tests/previews/`: off-screen launcher/menu renders produced by the checks.
 
-## Publish a clean GitHub copy
+## Creating a clean GitHub copy
 
 Use **this directory as the repository root**, or extract the source ZIP into a fresh directory and publish its `Umbra-Suite` contents. Source staging uses an explicit allowlist and excludes `bin`, `obj`, game DLLs, executables, personal settings, logs and build artifacts. The supplied `.gitignore` covers generated files. Upload the release ZIP separately through GitHub Releases.
 
