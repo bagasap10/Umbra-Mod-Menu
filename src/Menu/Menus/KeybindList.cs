@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UmbraMenu.Menus
@@ -9,19 +9,16 @@ namespace UmbraMenu.Menus
 
         public KeybindList() : base(keybindList)
         {
-            if (UmbraMenu.characterCollected)
+            List<Button> buttons = new List<Button>();
+            for (int i = 1; i < UmbraMenu.keybindDict.Count; i++)
             {
-                List<Button> buttons = new List<Button>();
-                for (int i = 1; i < UmbraMenu.keybindDict.Count; i++)
-                {
-                    Keybind keyBind = UmbraMenu.keybindDict[UmbraMenu.keyBindNames[i]];
-                    Button setKeybind = new Button(new TogglableButton(this, i, $"{keyBind.Name} : {keyBind.KeyCode}" , $"{keyBind.Name} : {keyBind.KeyCode}", ChangeKeybind, ChangeKeybind));
-                    buttons.Add(setKeybind);
-                }
-                AddButtons(buttons);
-                SetActivatingButton(Utility.FindButtonById(7, 4));
-                SetPrevMenuId(7);
+                Keybind keyBind = UmbraMenu.keybindDict[UmbraMenu.keyBindNames[i]];
+                Button setKeybind = new Button(new TogglableButton(this, i, $"{keyBind.Name} : {keyBind.KeyCode}" , $"{keyBind.Name} : {keyBind.KeyCode}", ChangeKeybind, ChangeKeybind));
+                buttons.Add(setKeybind);
             }
+            AddButtons(buttons);
+            SetActivatingButton(UmbraMenu.settingsMenu.GetButtons()?.Find(button => button.GetId() == 4));
+            SetPrevMenuId(7);
         }
 
         public override void Draw()

@@ -35,6 +35,9 @@ try {
         [IO.File]::WriteAllText((Join-Path $outDir "${menuName}Constructor.cs"), $menuSource.Substring(0,$boundary) + $actionFragment)
     }
     Run-Checks 'UiChecks' ($uiSources + (@('MockUnity.cs','IconMock.cs','Checks.cs','ResizeChecks.cs','BackShortcutChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
+    & (Join-Path $PSScriptRoot 'GenerateLobbyChecks.ps1') -SuiteRoot $suiteRoot -OutputPath (Join-Path $outDir 'LobbyRuntime.cs')
+    $lobbySources = @('Menus\Main.cs','Menus\Settings.cs','Menus\KeybindList.cs','Menus\RenderControls.cs') | ForEach-Object { "src\Menu\$_" }
+    Run-Checks 'LobbyChecks' ($uiSources + $lobbySources + @('artifacts\tests\LobbyRuntime.cs') + (@('MockUnity.cs','IconMock.cs','LobbyMock.cs','LobbyChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
     $gameSources = @('WorldCheats.cs','PlayerCheats.cs','Menus\Main.cs','Menus\CheatsMenu.cs','CatalogGrouping.cs','Reflections.cs','CatalogIcons.cs','ItemPacks.cs','PortalCatalog.cs','PortalIcons.cs','EspTargets.cs','InventorySafety.cs','Menus\Teleporter.cs','Menus\ItemList.cs','Menus\InventoryItemList.cs','Menus\EquipmentList.cs','Menus\ChestItemList.cs','Menus\ItemPackList.cs','Menus\ItemPackDetails.cs') | ForEach-Object { "src\Menu\$_" }
     Run-Checks 'GameChecks' ($uiSources + $gameSources + @('artifacts\tests\ItemsConstructor.cs','artifacts\tests\PlayerConstructor.cs','artifacts\tests\MovementConstructor.cs') + (@('GameMockUnity.cs','GameChecks.cs','GameExtraChecks.cs','ChestMock.cs','WorldCheatsMock.cs','WorldCheatsChecks.cs','PlayerCheatsMock.cs','PlayerCheatsChecks.cs','CatalogSearchChecks.cs','GameIconMock.cs','PackChecks.cs','PortalIconChecks.cs','StabilityChecks.cs') | ForEach-Object { "tests\Menu\$_" }))
     $runtimeSources = @('Loader.cs','SafeRoutine.cs','MenuSettings.cs','Textures.cs','Reflections.cs','InventorySafety.cs') | ForEach-Object { "src\Menu\$_" }

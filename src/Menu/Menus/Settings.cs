@@ -28,33 +28,30 @@ namespace UmbraMenu.Menus
 
         public Settings() : base(settings)
         {
-            if (UmbraMenu.characterCollected)
-            {
-                void DoNothing() => Utility.StubbedFunction();
-                void ToggleKeybindMenu() => UmbraMenu.menus[16].ToggleMenu();
-                changeWidth = new Button(new MulButton(this, 1, $"WINDOW WIDTH : {MenuUI.ConfiguredWidth:0}", DoNothing, IncreaseWidth, DecreaseWidth));
-                allowNavigation = new Button(new TogglableButton(this, 2, "KEYBOARD NAVIGATION : OFF", "KEYBOARD NAVIGATION : ON", ToggleAllowNavigation, ToggleAllowNavigation, UmbraMenu.AllowNavigation));
-                changeGodModeVersion = new Button(new NormalButton(this, 3, $"GOD TYPE : {GodVerion[UmbraMenu.GodVersion]}", ChangeGodVersion));
-                toggleKeybindMenu = new Button(new TogglableButton(this, 4, "KEYBIND MENU : OFF", "KEYBIND MENU : ON", ToggleKeybindMenu, ToggleKeybindMenu));
-                reloadMenu = new Button(new NormalButton(this, 5, $"RELOAD MENU", ReloadMenus));
-                resetSettings = new Button(new NormalButton(this, 6, $"RESET SETTINGS", SetSettingsToDefaults));
-                changeHeight = new Button(new MulButton(this, 7, $"WINDOW HEIGHT : {MenuUI.ConfiguredHeight:0}", DoNothing, () => MenuUI.ChangeSize(0, 20), () => MenuUI.ChangeSize(0, -20)));
-                changeOpacity = new Button(new MulButton(this, 8, $"GLASS OPACITY : {UmbraMenu.GlassOpacity:P0}", DoNothing, () => ChangeOpacity(.05f), () => ChangeOpacity(-.05f)));
+            void DoNothing() => Utility.StubbedFunction();
+            void ToggleKeybindMenu() => UmbraMenu.menus[16].ToggleMenu();
+            changeWidth = new Button(new MulButton(this, 1, $"WINDOW WIDTH : {MenuUI.ConfiguredWidth:0}", DoNothing, IncreaseWidth, DecreaseWidth));
+            allowNavigation = new Button(new TogglableButton(this, 2, "KEYBOARD NAVIGATION : OFF", "KEYBOARD NAVIGATION : ON", ToggleAllowNavigation, ToggleAllowNavigation, UmbraMenu.AllowNavigation));
+            changeGodModeVersion = new Button(new NormalButton(this, 3, $"GOD TYPE : {GodVerion[UmbraMenu.GodVersion]}", ChangeGodVersion));
+            toggleKeybindMenu = new Button(new TogglableButton(this, 4, "KEYBIND MENU : OFF", "KEYBIND MENU : ON", ToggleKeybindMenu, ToggleKeybindMenu));
+            reloadMenu = new Button(new NormalButton(this, 5, $"RELOAD MENU", ReloadMenus));
+            resetSettings = new Button(new NormalButton(this, 6, $"RESET SETTINGS", SetSettingsToDefaults));
+            changeHeight = new Button(new MulButton(this, 7, $"WINDOW HEIGHT : {MenuUI.ConfiguredHeight:0}", DoNothing, () => MenuUI.ChangeSize(0, 20), () => MenuUI.ChangeSize(0, -20)));
+            changeOpacity = new Button(new MulButton(this, 8, $"GLASS OPACITY : {UmbraMenu.GlassOpacity:P0}", DoNothing, () => ChangeOpacity(.05f), () => ChangeOpacity(-.05f)));
 
-                AddButtons(new List<Button>()
-                {
-                    changeWidth,
-                    allowNavigation,
-                    changeGodModeVersion,
-                    toggleKeybindMenu,
-                    reloadMenu,
-                    resetSettings,
-                    changeHeight,
-                    changeOpacity
-                });
-                SetActivatingButton(Utility.FindButtonById(0, 7));
-                SetPrevMenuId(0);
-            }
+            AddButtons(new List<Button>()
+            {
+                changeWidth,
+                allowNavigation,
+                changeGodModeVersion,
+                toggleKeybindMenu,
+                reloadMenu,
+                resetSettings,
+                changeHeight,
+                changeOpacity
+            });
+            SetActivatingButton(UmbraMenu.mainMenu.GetButtons()?.Find(button => button.GetId() == 7));
+            SetPrevMenuId(0);
         }
 
         public override void Draw()
@@ -107,7 +104,7 @@ namespace UmbraMenu.Menus
 
         public void ChangeGodVersion()
         {
-            if (Player.GodToggle)
+            if (UmbraMenu.characterCollected && Player.GodToggle)
             {
                 Player.GodToggle = false;
                 ((Player)UmbraMenu.playerMenu).toggleGod.SetEnabled(false);

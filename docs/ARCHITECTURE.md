@@ -55,6 +55,8 @@ PlayerCheats uses native damage, gold-collection, money-change and per-body stat
 
 ## Repository boundaries
 
+`MenuUI.CanUsePage` permits Overview, Visuals, Settings and Keybinds without a player, while retaining the player requirement for gameplay pages and keyboard actions. Their controls are constructed before a run and link directly to the initialized parent page, avoiding access to the menu registry during static initialization. `RenderControls` owns visual preferences separately from scene target caches; scene resets release targets without resetting those choices. Lobby regression checks compile the real controls plus input routines extracted from the current production source, covering startup order, mouse/keyboard access, chat/capture guards, settings changes and preference retention.
+
 - `src/Menu`: game-facing menu code.
 - `src/Injector`: new WinForms launcher and supervised injection worker.
 - `src/Shared`: bounded, atomic launcher/menu status protocol.

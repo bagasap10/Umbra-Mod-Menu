@@ -12,7 +12,7 @@ namespace UmbraMenu
     {
         public const string
             NAME = "U M B R A",
-            VERSION = "4.1.2",
+            VERSION = "4.1.3",
             DLC_NAME = "Hallowed Concepts";
 
 
@@ -331,7 +331,6 @@ namespace UmbraMenu
                     if (Screen.height < 1080)
                     {
                         lowResolutionMonitor = true;
-                        Menus.Render.renderMods = false;
                     }
                     Utility.ResetMenu();
                 }
@@ -550,7 +549,7 @@ namespace UmbraMenu
         private void UpdateMainButtonsRoutine()
         {
             ((Menus.CheatsMenu)cheatsMenu).RefreshControls();
-            if (InGameCheck() && mainMenu.IsEnabled())
+            if (mainMenu.IsEnabled())
             {
                 for (int i = 1; i < menus.Count; i++)
                 {
@@ -569,7 +568,7 @@ namespace UmbraMenu
 
         private void UpdateKeybindButtonRoutine()
         {
-            if (InGameCheck() && keybindListMenu.IsEnabled())
+            if (listenForKeybind && keybindListMenu.IsEnabled())
             {
                 // Keep one capture row active; iterate actual rows, not one-based IDs.
                 Button active = Utility.GetEnabledKeybindButton();
@@ -607,6 +606,7 @@ namespace UmbraMenu
                 Regex rgAlpha = new Regex(@"^[A-Z]$");
                 Regex rgNum = new Regex(@"^[0-9]$");
                 Button button = Utility.GetEnabledKeybindButton();
+                if (button == null) { listenForKeybind = false; return; }
                 string newKeybind = Input.inputString;
                 if (newKeybind.Length > 1)
                 {
@@ -698,7 +698,7 @@ namespace UmbraMenu
                 return;
             }
 
-            if (InGameCheck())
+            if (InGameCheck() || currentScene.name == "lobby")
             {
                 if (chatOpen && Input.GetKeyDown(KeyCode.Escape))
                 {
@@ -831,7 +831,7 @@ namespace UmbraMenu
             if (mainMenu.IsEnabled())
             {
                 Cursor.visible = true;
-                if (characterCollected)
+                if (MenuUI.CanUsePage(MenuUI.ActiveMenuId))
                 {
                     if (AllowNavigation)
                     {
@@ -925,6 +925,38 @@ namespace UmbraMenu
             Keybinds();
         }
 
+        private void VisualKeybinds()
+        {
+            #region Render Menu Keybinds
+            if (Input.GetKeyDown(keybindDict["RENDER MENU"].KeyCode))
+            {
+                renderMenu.ToggleMenu();
+                if (navigationToggle && AllowNavigation)
+                {
+                    Navigation.menuIndex = 6;
+                }
+            }
+
+            if (Input.GetKeyDown(keybindDict["RENDER ACTIVE MODS"].KeyCode))
+            {
+                Menus.Render.renderMods = !Menus.Render.renderMods;
+                Utility.FindButtonById(6, 1).SetEnabled(Menus.Render.renderMods);
+            }
+
+            if (Input.GetKeyDown(keybindDict["RENDER INTERACTABLES"].KeyCode))
+            {
+                Menus.Render.ToggleRenderInteractablesKey();
+                Utility.FindButtonById(6, 2).SetEnabled(Menus.Render.renderInteractables);
+            }
+
+            if (Input.GetKeyDown(keybindDict["RENDER MOB ESP"].KeyCode))
+            {
+                Menus.Render.renderMobs = !Menus.Render.renderMobs;
+                Utility.FindButtonById(6, 3).SetEnabled(Menus.Render.renderMobs);
+            }
+            #endregion
+        }
+
         private void Keybinds()
         {
             #region Dev Mode Keybinds
@@ -946,6 +978,8 @@ namespace UmbraMenu
                 GetCharacter();
             }
             #endregion
+
+            if (!chatOpen) VisualKeybinds();
 
             if (!chatOpen && InGameCheck())
             {
@@ -1204,34 +1238,7 @@ namespace UmbraMenu
                 }
                 #endregion
 
-                #region Render Menu Keybinds
-                if (Input.GetKeyDown(keybindDict["RENDER MENU"].KeyCode))
-                {
-                    renderMenu.ToggleMenu();
-                    if (navigationToggle && AllowNavigation)
-                    {
-                        Navigation.menuIndex = 6;
-                    }
-                }
 
-                if (Input.GetKeyDown(keybindDict["RENDER ACTIVE MODS"].KeyCode))
-                {
-                    Menus.Render.renderMods = !Menus.Render.renderMods;
-                    Utility.FindButtonById(6, 1).SetEnabled(Menus.Render.renderMods);
-                }
-
-                if (Input.GetKeyDown(keybindDict["RENDER INTERACTABLES"].KeyCode))
-                {
-                    Menus.Render.ToggleRenderInteractablesKey();
-                    Utility.FindButtonById(6, 2).SetEnabled(Menus.Render.renderInteractables);
-                }
-
-                if (Input.GetKeyDown(keybindDict["RENDER MOB ESP"].KeyCode))
-                {
-                    Menus.Render.renderMobs = !Menus.Render.renderMobs;
-                    Utility.FindButtonById(6, 3).SetEnabled(Menus.Render.renderMobs);
-                }
-                #endregion
             }
         }
 

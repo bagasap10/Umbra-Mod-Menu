@@ -473,7 +473,7 @@ namespace UmbraMenu
                     return button;
                 }
             }
-            throw new NullReferenceException($"No buttons are enabled in the keybind menu");
+            return null;
         }
 
         public static bool KeyCodeInUse(KeyCode keyCode)

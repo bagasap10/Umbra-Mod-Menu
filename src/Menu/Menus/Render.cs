@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using RoR2;
 using System.Collections.Generic;
@@ -7,10 +7,8 @@ using UmbraMenu.monsoon;
 
 namespace UmbraMenu.Menus
 {
-    public class Render : Menu
+    public partial class Render : Menu
     {
-        private static readonly IMenu render = new NormalMenu(6, new Rect(10, 795, 20, 20), "RENDER MENU");
-
         private static Camera camera;
 
         public static List<PurchaseInteraction> purchaseInteractions = new List<PurchaseInteraction>();
@@ -20,37 +18,7 @@ namespace UmbraMenu.Menus
         public static List<CharacterBody> enemyBodies = new List<CharacterBody>();
         private static List<EspTargets.Interactable> additionalInteractables = new List<EspTargets.Interactable>();
         private static float nextInteractableRefresh;
-        public static bool scenePopulateToggle = true, renderMobs, renderInteractables, renderMods = true;
-
-        public Button toggleActiveMods;
-        public Button toggleInteractESP;
-        public Button toggleMobESP;
-
-        public Render() : base(render)
-        {
-            if (UmbraMenu.characterCollected)
-            {
-                if (UmbraMenu.lowResolutionMonitor)
-                {
-                    toggleActiveMods = new Button(new TogglableButton(this, 1, "ACTIVE MODS : OFF", "ACTIVE MODS : ON", ToggleRenderMods, ToggleRenderMods));
-                }
-                else
-                {
-                    toggleActiveMods = new Button(new TogglableButton(this, 1, "ACTIVE MODS : OFF", "ACTIVE MODS : ON", ToggleRenderMods, ToggleRenderMods, true));
-                }
-                toggleInteractESP = new Button(new TogglableButton(this, 2, "INTERACTABLES ESP : OFF", "INTERACTABLES ESP : ON", ToggleRenderInteractables, ToggleRenderInteractables));
-                toggleMobESP = new Button(new TogglableButton(this, 3, "MOB ESP : OFF", "MOB ESP : ON", ToggleRenderMobs, ToggleRenderMobs));
-
-                AddButtons(new List<Button>()
-                {
-                    toggleActiveMods,
-                    toggleInteractESP,
-                    toggleMobESP
-                });
-                SetActivatingButton(Utility.FindButtonById(0, 6));
-                SetPrevMenuId(0);
-            }
-        }
+        public static bool scenePopulateToggle = true;
 
         public override void Draw()
         {
@@ -61,16 +29,6 @@ namespace UmbraMenu.Menus
             }
         }
 
-        public override void Reset()
-        {
-            renderMobs = false;
-            renderInteractables = false;
-            // Add check here later for low resolution monitors
-            renderMods = true;
-            DisableInteractables();
-            base.Reset();
-        }
-
         public static void RefreshInteractables(SceneDirector obj)
         {
             try { RefreshInteractables(); }
@@ -78,6 +36,7 @@ namespace UmbraMenu.Menus
         }
         public static void RefreshInteractables()
         {
+            if (!UmbraMenu.InGameCheck()) return;
             nextInteractableRefresh = Time.unscaledTime + 1f;
             MonoBehaviour[] components = MonoBehaviour.FindObjectsOfType<MonoBehaviour>();
             barrelInteractions = components.OfType<BarrelInteraction>().ToList();
@@ -92,45 +51,6 @@ namespace UmbraMenu.Menus
             if (renderInteractables && UmbraMenu.InGameCheck() && Time.unscaledTime >= nextInteractableRefresh)
                 RefreshInteractables();
         }
-        private void ToggleRenderInteractables()
-        {
-
-            if (renderInteractables)
-            {
-                DisableInteractables();
-            }
-            else
-            {
-                EnableInteractables();
-                Render.RefreshInteractables();
-            }
-            renderInteractables = !renderInteractables;
-        }
-        public static void ToggleRenderInteractablesKey()
-        {
-
-            if (renderInteractables)
-            {
-                DisableInteractables();
-            }
-            else
-            {
-                EnableInteractables();
-                Render.RefreshInteractables();
-            }
-            renderInteractables = !renderInteractables;
-        }
-
-        private void ToggleRenderMods()
-        {
-            renderMods = !renderMods;
-        }
-
-        private void ToggleRenderMobs()
-        {
-            renderMobs = !renderMobs;
-        }
-
         public static void EnableInteractables()
         {
             if (scenePopulateToggle)

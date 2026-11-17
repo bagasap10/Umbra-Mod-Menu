@@ -22,8 +22,8 @@ namespace UnityEngine
     public class GUIStyle {public int fontSize=14;public FontStyle fontStyle;public TextAnchor alignment;public bool wordWrap,richText;public float fixedWidth;public RectOffset padding=new RectOffset(),border=new RectOffset();public GUIStyleState normal=new GUIStyleState(),hover=new GUIStyleState(),active=new GUIStyleState(),focused=new GUIStyleState();public static readonly GUIStyle none=new GUIStyle();public GUIStyle(){} public GUIStyle(GUIStyle s){fontSize=s.fontSize;fontStyle=s.fontStyle;alignment=s.alignment;wordWrap=s.wordWrap;richText=s.richText;padding=s.padding;normal=new GUIStyleState{textColor=s.normal.textColor,background=s.normal.background};}}
     public class GUISkin:Object {public GUIStyle textField=new GUIStyle(),verticalScrollbar=new GUIStyle(),verticalScrollbarThumb=new GUIStyle(),verticalScrollbarUpButton=new GUIStyle(),verticalScrollbarDownButton=new GUIStyle();}
     public class GUIContent {public string text;public GUIContent(string t){text=t;}public static GUIContent none=>new GUIContent("");}
-    public static class Input {public static KeyCode Pressed;public static bool GetKeyDown(KeyCode key)=>Pressed!=KeyCode.None&&Pressed==key;}
-    public enum KeyCode {None,Insert,Escape,Return,KeypadEnter,Keypad0,Keypad1,A,B}
+    public static class Input {public static KeyCode Pressed;public static string inputString="";public static float GetAxis(string name)=>0;public static bool GetKeyDown(KeyCode key)=>Pressed!=KeyCode.None&&Pressed==key;}
+    public enum KeyCode {None,Insert,Escape,Return,KeypadEnter,Keypad0,Keypad1,Keypad2,Keypad4,Keypad5,Keypad6,Keypad8,A,B,C,I,M}
     public enum EventType {Layout,Repaint,MouseDown,MouseUp,MouseDrag,Ignore,KeyDown,Used}
     public class Event {public static Event current=new Event {type=EventType.Repaint};public EventType type;public KeyCode keyCode;public int button;public Vector2 mousePosition;public void Use(){type=EventType.Used;}}
     public static class Screen {public static int width=900,height=800;}
@@ -57,17 +57,17 @@ namespace UnityEngine
 namespace UmbraMenu
 {
     public static class Styles {public static GUIStyle BtnStyle=>UITheme.Button;public static GUIStyle OffStyle=>UITheme.Button;public static GUIStyle OnStyle=>UITheme.Button;public static GUIStyle LabelStyle=>UITheme.Label;public static GUIStyle HighlightBtnStyle=>UITheme.SelectedButton;}
-    public class Keybind {public UnityEngine.KeyCode KeyCode;}
-    public static class Loader {public static bool devBuild,updateAvailable; public static void Report(string state,string message,string shortcut="") {}}
-    public static class UmbraMenu {public const string VERSION="4.1.2"; public const string DLC_NAME="Hallowed Concepts";public static float Width=350,WindowWidth=680,WindowHeight=560,GlassOpacity=.62f;public static bool AllowNavigation=true; public static bool characterCollected=true,forceFullModMenu,navigationToggle,lowResolutionMonitor,listenForKeybind,chatOpen,scrolled;public static int previousMenuOpen;public static Menu mainMenu;public static List<Menu> menus=new List<Menu>();public static Dictionary<string,Keybind> keybindDict=new Dictionary<string,Keybind>{{"MAIN MENU",new Keybind {KeyCode=UnityEngine.KeyCode.Insert}}};}
-    public static class Utility {public static int Saves;public static void SaveSettings(){Saves++;}public static Button FindButtonById(int m,int b)=>UmbraMenu.menus[m].GetButtons()?.FirstOrDefault(x=>x.GetId()==b);}
+    public partial class Keybind {public UnityEngine.KeyCode KeyCode;}
+    public static partial class Loader {public static bool devBuild,updateAvailable; public static void Report(string state,string message,string shortcut="") {}}
+    public static partial class UmbraMenu {public const string VERSION="4.1.3"; public const string DLC_NAME="Hallowed Concepts";public static float Width=350,WindowWidth=680,WindowHeight=560,GlassOpacity=.62f;public static bool AllowNavigation=true; public static bool characterCollected=true,forceFullModMenu,navigationToggle,lowResolutionMonitor,listenForKeybind,chatOpen,scrolled;public static int previousMenuOpen;public static Menu mainMenu;public static List<Menu> menus=new List<Menu>();public static Dictionary<string,Keybind> keybindDict=new Dictionary<string,Keybind>{{"MAIN MENU",new Keybind {KeyCode=UnityEngine.KeyCode.Insert}}};}
+    public static partial class Utility {public static int Saves;public static void SaveSettings(){Saves++;}public static Button FindButtonById(int m,int b)=>UmbraMenu.menus[m].GetButtons()?.FirstOrDefault(x=>x.GetId()==b);}
 }
 namespace UmbraMenu.Menus { public class InventoryItemList {public const int MenuId=17;} }
 
 namespace UnityEngine {
     public enum FocusType { Passive } public enum CursorMode { Auto }
     public static class GUIUtility {public static int hotControl;public static int GetControlID(int hint,FocusType focus)=>hint;}
-    public static class Cursor {public static Texture2D CurrentTexture;public static void SetCursor(Texture2D texture,Vector2 hotspot,CursorMode mode){CurrentTexture=texture;}}
+    public static class Cursor {public static bool visible;public static Texture2D CurrentTexture;public static void SetCursor(Texture2D texture,Vector2 hotspot,CursorMode mode){CurrentTexture=texture;}}
 }
 
 

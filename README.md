@@ -2,11 +2,11 @@
 
 Source and release tooling for the **Umbra Menu** and a new **Umbra Injector** launcher for Risk of Rain 2, including Hallowed Concepts. This directory is independent of the older menu checkout and binary-only injector.
 
-Version **4.1.2** uses **DLC count.feature update.fix** numbering. The first number identifies the latest supported DLC: **4 = Hallowed Concepts**. The second increases for feature updates; the third increases for fixes. The menu and injector share the same suite version.
+Version **4.1.3** uses **DLC count.feature update.fix** numbering. The first number identifies the latest supported DLC: **4 = Hallowed Concepts**. The second increases for feature updates; the third increases for fixes. The menu and injector share the same suite version.
 
 ## Use the release
 
-1. Extract the entire `Umbra-Suite-4.1.2-win-x64.zip` into one folder.
+1. Extract the entire `Umbra-Suite-4.1.3-win-x64.zip` into one folder.
 2. Run `UmbraInjector.exe`. Start the game yourself, or use **Start game** in the launcher.
 3. The launcher finds the game automatically. Click **Inject menu** once it shows ready.
 4. Wait for **Menu active**. Open/close the menu with **Insert** or **Numpad 0**; **Numpad 1** goes back.
@@ -14,6 +14,8 @@ Version **4.1.2** uses **DLC count.feature update.fix** numbering. The first num
 Keep `UmbraMenu.dll`, `SharpMonoInjector.dll`, `bundle.xml` and the executable/config together. You do not need the old injector's `Data` folder. A complete release includes every redistributable runtime dependency. Windows must have .NET Framework 4.8 installed; game-owned Unity/RoR2 libraries come from the installed game and are deliberately not redistributed.
 
 Existing menu settings/keybinds are preserved. After startup the launcher reports the actual configured toggle key. Restart the game before switching menu builds. See [usage and troubleshooting](docs/USAGE.md).
+
+**Settings**, **Visuals** and **Keybinds** are available on the title screen and in the lobby. You can configure the menu before a run; ESP collects and draws targets once gameplay starts. Gameplay pages continue to require an active player.
 
 ## Build and test
 
@@ -33,8 +35,8 @@ The solution is `Umbra-Suite.sln`. For Visual Studio, supply `/p:GameDir=...` wh
 Outputs:
 
 - `artifacts/release/`: ready-to-run injector, menu, backend, compatibility manifest and licenses.
-- `artifacts/Umbra-Suite-4.1.2-win-x64.zip`: release ZIP for GitHub Releases.
-- `artifacts/Umbra-Suite-4.1.2-source.zip`: clean source ZIP, including all buildable dependency source.
+- `artifacts/Umbra-Suite-4.1.3-win-x64.zip`: release ZIP for GitHub Releases.
+- `artifacts/Umbra-Suite-4.1.3-source.zip`: clean source ZIP, including all buildable dependency source.
 - `artifacts/SHA256SUMS.txt`: package checksums.
 - `artifacts/tests/previews/`: off-screen launcher/menu renders produced by the checks.
 
@@ -54,7 +56,7 @@ The native backend releases reserved pages with `MEM_RELEASE`, closes thread/pro
 
 All existing rarity/DLC sections, catalog icons, item/removal/equipment/chest search, item packs, portals, ESP and resize/back-key features are retained. The **Cheats** section sits directly below Overview and groups resources, survival, movement, combat, stages and loot. It includes eight new character cheats and the former World Cheats controls, plus moved resource, God Mode, Aimbot, Infinite Skills, Flight and instant-charging controls. See [Cheats](docs/cheats.md) for controls and limits.
 
-See [4.1.2 release notes](docs/release-notes-4.1.2.md), [item packs](docs/item-packs.md), [portal images](docs/portal-icons.md), and [architecture and validation](docs/ARCHITECTURE.md).
+See [4.1.3 release notes](docs/release-notes-4.1.3.md), [item packs](docs/item-packs.md), [portal images](docs/portal-icons.md), and [architecture and validation](docs/ARCHITECTURE.md).
 
 Automated checks do not inject a running game. Native injection and gameplay must still be tested in-game; these changes reduce identified risks and cannot guarantee a crash-free game session.
 

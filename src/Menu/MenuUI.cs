@@ -37,6 +37,8 @@ namespace UmbraMenu
         private static int resizeControl, cursorDirection = -1;
         public static int ActiveMenuId { get; private set; }
         public static bool CanUsePages => UmbraMenu.characterCollected || UmbraMenu.forceFullModMenu;
+        public static bool CanUsePage(int id) => id >= 0 && id < UmbraMenu.menus.Count
+            && (id == 0 || id == 6 || id == 7 || id == 16 || CanUsePages);
         public static float ConfiguredWidth => Mathf.Clamp(UmbraMenu.WindowWidth, MinWidth, MaxWidth);
         public static float ConfiguredHeight => Mathf.Clamp(UmbraMenu.WindowHeight, MinHeight, MaxHeight);
 
@@ -190,9 +192,9 @@ namespace UmbraMenu
         public static void SyncPage()
         {
             if (UmbraMenu.menus == null || UmbraMenu.menus.Count == 0) return;
-            if (!CanUsePages) { ActiveMenuId = 0; return; }
+            if (!CanUsePage(ActiveMenuId)) { NavigateTo(0); return; }
             int requested = UmbraMenu.previousMenuOpen;
-            if (requested > 0 && requested < UmbraMenu.menus.Count && UmbraMenu.menus[requested].IsEnabled())
+            if (requested > 0 && CanUsePage(requested) && UmbraMenu.menus[requested].IsEnabled())
             {
                 if (requested != ActiveMenuId) NavigateTo(requested);
             }
@@ -205,7 +207,7 @@ namespace UmbraMenu
 
         public static void NavigateTo(int id)
         {
-            if (id < 0 || id >= UmbraMenu.menus.Count || (id > 0 && !CanUsePages)) return;
+            if (!CanUsePage(id)) return;
             bool[] branch = new bool[UmbraMenu.menus.Count];
             int ancestor = id;
             for (int depth = 0; ancestor > 0 && depth < branch.Length; depth++)
@@ -318,7 +320,7 @@ namespace UmbraMenu
                 int page = SidebarPages[slot];
                 bool selected = category == page;
                 bool oldEnabled = GUI.enabled;
-                GUI.enabled = oldEnabled && (page == 0 || (CanUsePages && page < UmbraMenu.menus.Count));
+                GUI.enabled = oldEnabled && CanUsePage(page);
                 if (GUI.Button(new Rect(0, slot * 36, rail - 40, 31), names[page], selected ? UITheme.SidebarSelected : UITheme.Sidebar)) NavigateTo(page);
                 if (selected) UITheme.Fill(new Rect(0, slot * 36 + 7, 3, 17), UITheme.Accent);
                 GUI.enabled = oldEnabled;
@@ -360,7 +362,7 @@ namespace UmbraMenu
         {
             GUI.Box(new Rect(body.x, body.y, body.width, 82), "", UITheme.GroupStyle);
             GUI.Label(new Rect(body.x + 6, body.y + 8, body.width - 12, 28), CanUsePages ? "Ready to explore." : "Your next run starts here.", UITheme.Brand);
-            GUI.Label(new Rect(body.x + 6, body.y + 38, body.width - 12, 35), CanUsePages ? "Choose a category. Your tools stay here as you switch pages." : "Start a run to access player, inventory and world tools.", UITheme.Hint);
+            GUI.Label(new Rect(body.x + 6, body.y + 38, body.width - 12, 35), CanUsePages ? "Choose a category. Your tools stay here as you switch pages." : "Adjust Visuals and Settings now.\nStart a run for player, inventory and world tools.", UITheme.Hint);
             body.y += 98;
             body.height -= 98;
             UmbraMenu.mainMenu.Draw();
@@ -383,7 +385,7 @@ namespace UmbraMenu
                 viewport.height -= 52;
             }
             rowWidth = Mathf.Max(100, viewport.width - 16);
-            float height = menu.Id == 0 ? 374 : UITheme.RowPitch * menu.NumberOfButtons;
+            float height = menu.Id == 0 ? (CanUsePages ? 374 : 124) : UITheme.RowPitch * menu.NumberOfButtons;
             float maxScroll = Mathf.Max(0, height - viewport.height);
             Vector2 scroll = menu.CurrentScrollPosition;
             scroll.x = 0;
@@ -406,6 +408,11 @@ namespace UmbraMenu
         {
             if (menu == 0)
             {
+                if (!CanUsePages)
+                {
+                    if (position == 8) return new Rect(0, 82, rowWidth, 40);
+                    if (position == 6 || position == 7) position -= 5;
+                }
                 if (position == 8) return new Rect(0, 332, rowWidth, 40);
                 if (position == 9) position = 8;
                 float cardWidth = (rowWidth - 10) / 2;

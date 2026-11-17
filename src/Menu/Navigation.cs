@@ -11,7 +11,7 @@ namespace UmbraMenu
 
         public static void PressBtn(int menuId, int btnId)
         {
-            if (btnId < 1)
+            if (btnId < 1 || !MenuUI.CanUsePage(menuId))
                 return;
 
             Button button = Utility.FindButtonById(menuId, btnId);
@@ -25,12 +25,12 @@ namespace UmbraMenu
 
         public static void IncreaseValue(int menuId, int btnId)
         {
-            Utility.FindButtonById(menuId, btnId)?.GetIncreaseAction()?.Invoke();
+            if (MenuUI.CanUsePage(menuId)) Utility.FindButtonById(menuId, btnId)?.GetIncreaseAction()?.Invoke();
         }
 
         public static void DecreaseValue(int menuId, int btnId)
         {
-            Utility.FindButtonById(menuId, btnId)?.GetDecreaseAction()?.Invoke();
+            if (MenuUI.CanUsePage(menuId)) Utility.FindButtonById(menuId, btnId)?.GetDecreaseAction()?.Invoke();
         }
 
         public static void GoBackAMenu()

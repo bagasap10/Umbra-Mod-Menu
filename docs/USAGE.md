@@ -1,6 +1,6 @@
 # Run Umbra Suite
 
-**Version 4.1.2 / Hallowed Concepts (DLC#4).** Suite versions use DLC count.feature update.fix numbering.
+**Version 4.1.3 / Hallowed Concepts (DLC#4).** Suite versions use DLC count.feature update.fix numbering.
 
 Extract the full release ZIP and double-click **UmbraInjector.exe**. The launcher does not need a separate injector installation, an arbitrary DLL picker, a manual PID, or a working directory set by a shortcut.
 
@@ -11,6 +11,8 @@ If the game has updated since the menu was built, the package card shows an ambe
 Click **Inject menu** once. The UI remains responsive while the helper performs native injection. The menu then waits for the game's catalogs and initializes on the main thread. The launcher confirms **Menu active** after the menu's actual startup, rather than reporting success merely because the DLL was submitted.
 
 **Insert / Numpad 0** toggles the menu; **Numpad 1** returns to the previous page. Existing custom keybinds are retained and the active toggle key is shown after startup. Key capture, search entry and game chat keep their existing input guards. Drag a border/corner to resize; change Glass Opacity in Settings.
+
+At the title screen or in the lobby, open **Settings** or **Visuals** from the overview or sidebar. Window size, opacity, keyboard navigation, keybind editing, configured God type, reload and reset controls work before a player exists. Numpad selection/adjustment and visual shortcuts also work there. Visual choices survive scene changes and menu rebuilds for the current menu session; ESP waits for gameplay to collect/draw targets. Player, Cheats, inventory and world pages remain unavailable until a character is active.
 
 The Item Spawn, Remove Items, Equipment Spawn, and Change Chest Item pages have a search field above the list. Type part of the pickup name; matching ignores capitalization and surrounding spaces. **Clear** restores the list. Each page keeps its own query and matching rarity/DLC sections. **Enter / Escape** finishes typing so keyboard navigation can resume.
 

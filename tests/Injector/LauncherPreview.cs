@@ -36,7 +36,7 @@ internal static class LauncherPreview
         string gameDir = Path.GetFullPath("artifacts/tests/launcher-game");
         string managed = Path.Combine(gameDir, "Risk of Rain 2_Data", "Managed"); Directory.CreateDirectory(managed);
         string assembly = Path.Combine(managed, "RoR2.dll"); File.WriteAllText(assembly, "launcher compatibility fixture");
-        var bundle = new Bundle { Version = "4.1.2", Module = Guid.NewGuid().ToString("D"), GameHash = Bundle.Hash(assembly) };
+        var bundle = new Bundle { Version = "4.1.3", Module = Guid.NewGuid().ToString("D"), GameHash = Bundle.Hash(assembly) };
         var game = new GameProcess { Id = 70002, StartTicks = DateTime.UtcNow.Ticks, Executable = Path.Combine(gameDir, "Risk of Rain 2.exe"), MonoReady = true };
         var games = Get<ComboBox>(form, "games"); var inject = Get<Button>(form, "inject"); var package = Get<Label>(form, "packageStatus");
         Field("refreshing").SetValue(form, true); Field("bundle").SetValue(form, bundle);

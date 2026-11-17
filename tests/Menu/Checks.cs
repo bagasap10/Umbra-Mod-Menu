@@ -44,7 +44,7 @@ partial class UiChecks
         int opened=0;Root.menus[3].AddButtons(new List<Button>{new Button(new TogglableButton(Root.menus[3],1,"ITEM SPAWN MENU : OFF","ITEM SPAWN MENU : ON",()=>{opened++;Root.menus[12].ToggleMenu();},()=>{opened++;Root.menus[12].ToggleMenu();}))});Root.menus[12].SetActivatingButton(Root.menus[3].GetButtons()[0]);MenuUI.NavigateTo(3);GUI.StartCanvas();MenuUI.Draw();GUI.ClickRect=new Rect(0,0,GUI.LastContent.width,40);MenuUI.Draw();Assert(opened==1&&MenuUI.ActiveMenuId==12,"Opening a child page with the mouse must preserve the feature's existing callback");
         MenuUI.NavigateTo(6);
         Screen.width=1280;Screen.height=720;GUI.StartCanvas();MenuUI.Draw();GUI.Save("artifacts/tests/previews/720p.png");Screen.width=800;Screen.height=600;GUI.StartCanvas();MenuUI.Draw();GUI.Save("artifacts/tests/previews/600p.png");
-        Root.characterCollected=false;MenuUI.SyncPage();Assert(MenuUI.ActiveMenuId==0,"Losing the player must show the waiting overview");GUI.StartCanvas();MenuUI.Draw();Assert(GUI.Labels.ContainsKey("Your next run starts here."),"Waiting overview must explain how to access tools");
+        Root.characterCollected=false;MenuUI.SyncPage();Assert(MenuUI.ActiveMenuId==6,"Visuals must remain available after losing the player");MenuUI.NavigateTo(0);GUI.StartCanvas();MenuUI.Draw();Assert(GUI.Labels.ContainsKey("Your next run starts here."),"Waiting overview must explain how to access tools");
         Assert(MenuUI.DisplayText("MOB ESP : ON")=="Mob ESP"&&MenuUI.DisplayText("DAMAGE/LVL (OFF) : 3")=="Damage/Lvl : 3","Labels must remove duplicate state words while retaining values");
         Console.WriteLine(checks+" UI assertions passed. Previews rendered from production MenuUI/UITheme drawing calls.");
     }

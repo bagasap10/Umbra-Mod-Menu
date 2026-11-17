@@ -50,6 +50,8 @@ namespace UmbraMenu.Menus
             {
                 AddButtons(new List<Button>
                 {
+                    new Button(new TogglableButton(this, 6, "VISUALS : OFF", "VISUALS : ON", RenderButtonAction, RenderButtonAction)),
+                    new Button(new TogglableButton(this, 7, "SETTINGS : OFF", "SETTINGS : ON", SettingsButtonAction, SettingsButtonAction)),
                     new Button(new TogglableButton(this, 8, "UNLOAD MENU", "CONFIRM?", DoNothing, UnloadMenu))
                 });
             }
