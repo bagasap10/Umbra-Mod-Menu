@@ -2,7 +2,7 @@
 
 ## Injection flow
 
-`LauncherForm` discovers a verified Risk of Rain 2 process. `Bundle` validates the two DLL hashes, assembly identity and RoR2 build fingerprint from a bounded XML manifest. `InjectionSession` holds an exclusive write lease and persists the attempt marker using PID plus process start time.
+`LauncherForm` discovers a verified Risk of Rain 2 process. `Bundle` validates the two DLL hashes, assembly identity and manifest structure. `CheckGameCompatibility` compares the installed RoR2 assembly with the build fingerprint and returns a warning for a mismatch. The launcher displays that warning in amber while enabling injection, and both the service and helper proceed with the same advisory check. A missing RoR2 assembly still raises an installation error. `InjectionSession` holds an exclusive write lease and persists the attempt marker using PID plus process start time.
 
 `InjectionService` runs the same executable in hidden `--worker` mode. The helper repeats validation before opening the process, invokes `UmbraMenu.Loader.Load`, disposes native resources and exits. The UI does not load the game assembly or run native injection code in its own process. It polls a small status document written by the menu for startup confirmation.
 
@@ -43,7 +43,7 @@ This is a focused refactor. The original menu's feature classes remain recogniza
 
 Separate checks compile the production loader/settings/routine/texture/reflection code to test deferred main-thread initialization, catalog readiness, duplicate lifecycle calls, deferred destruction, component failure, timeout subscription cleanup, failure backoff, settings recovery and resource release. These are lifecycle models, not a substitute for Unity's runtime.
 
-Injector checks use the production bundle/session/protocol code for checksums, incompatible builds, malformed manifests, atomic status reads, concurrent launchers, PID reuse and uncertain retry gates. Native memory tests allocate only inside the test console process, verify release through `VirtualQueryEx`, simulate preservation on timeout, and check failed-constructor handle cleanup. They **do not create a remote thread or inject a game**.
+Injector checks use the production bundle/session/protocol code for checksums, advisory game-version warnings, malformed manifests, atomic status reads, concurrent launchers, PID reuse and uncertain retry gates. The actual launcher control tree is checked for enabled injection with a mismatched game, a persistent warning, clearing warnings for matching packages and blocking missing files. Native memory tests allocate only inside the test console process, verify release through `VirtualQueryEx`, simulate preservation on timeout, and check failed-constructor handle cleanup. They **do not create a remote thread or inject a game**.
 
 The build compiles against the actual installed game DLLs with warnings treated as errors. Off-screen launcher and modeled menu previews are rendered for layout inspection. Neither a successful compile nor these models verifies real native injection, engine lifecycle timing, DLC runtime assets, multiplayer behavior or a long gameplay session. A live acceptance pass remains necessary; no crash-free guarantee is claimed.
 
@@ -62,4 +62,4 @@ PlayerCheats uses native damage, gold-collection, money-change and per-body stat
 - `tests`: regression fixtures and console checks; no personal game files.
 - `scripts`: build, checks and clean package generation.
 
-No game assemblies, personal settings, access tokens, old compiled injector binaries or auto-update network dependencies are needed in the public source tree. A release manifest fingerprints your installed RoR2 assembly; rebuild after updates instead of injecting an unverified stale DLL.
+No game assemblies, personal settings, access tokens, old compiled injector binaries or auto-update network dependencies are needed in the public source tree. A release manifest fingerprints the RoR2 assembly used to build the menu. After a game update, the launcher warns and permits injection; rebuilding is recommended when game changes affect menu features.

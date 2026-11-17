@@ -49,12 +49,15 @@ namespace UmbraSuite.Injector
             foreach(char character in value) if (!Uri.IsHexDigit(character)) return false;
             return true;
         }
-        public void VerifyGame(string gameExecutable)
+        // A different game build is advisory; an incomplete installation is still an error.
+        public string CheckGameCompatibility(string gameExecutable)
         {
             string managed = Path.Combine(Path.GetDirectoryName(gameExecutable), "Risk of Rain 2_Data", "Managed");
             string gameAssembly = Path.Combine(managed, "RoR2.dll");
-            if (!File.Exists(gameAssembly) || !string.Equals(Hash(gameAssembly), GameHash, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidDataException("This menu was built for a different game update. Rebuild the suite for your installed game, or use a matching release.");
+            if (!File.Exists(gameAssembly))
+                throw new FileNotFoundException("The game installation is missing RoR2.dll. Verify the game's files in Steam.", gameAssembly);
+            return string.Equals(Hash(gameAssembly), GameHash, StringComparison.OrdinalIgnoreCase)
+                ? string.Empty : "Warning: game version differs. You can still inject; some features may fail.";
         }
     }
 }

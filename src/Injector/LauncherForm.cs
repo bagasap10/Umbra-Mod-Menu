@@ -12,7 +12,8 @@ namespace UmbraSuite.Injector
     internal sealed class LauncherForm : Form
     {
         private static readonly Color Background = Color.FromArgb(14, 22, 30), Surface = Color.FromArgb(23, 35, 46),
-            Foreground = Color.FromArgb(230, 239, 243), Muted = Color.FromArgb(153, 174, 186), Accent = Color.FromArgb(100, 218, 186);
+            Foreground = Color.FromArgb(230, 239, 243), Muted = Color.FromArgb(153, 174, 186), Accent = Color.FromArgb(100, 218, 186),
+            Warning = Color.FromArgb(242, 194, 102);
         private readonly ComboBox games = new ComboBox();
         private readonly Label gameStatus = new Label(), packageStatus = new Label(), feedback = new Label(), heading = new Label();
         private readonly Button inject = new Button(), launch = new Button(), refresh = new Button(), logs = new Button();
@@ -21,7 +22,7 @@ namespace UmbraSuite.Injector
         private readonly List<Font> fonts = new List<Font>();
         private Bundle bundle;
         private bool refreshing, busy;
-        private string packageError, compatibleIdentity;
+        private string packageError, checkedGameIdentity, compatibilityWarning;
         private string lastMessage;
         private string lastAttemptIdentity, lastAttemptError;
         private readonly string directory = AppDomain.CurrentDomain.BaseDirectory;
@@ -52,7 +53,7 @@ namespace UmbraSuite.Injector
 
             var packageCard = Card(); var packageTitle = Label("2  Menu package", 12, Foreground); packageTitle.SetBounds(18, 12, 600, 25);
             packageStatus.Text = "Checking release files…";
-            packageStatus.ForeColor = Muted; packageStatus.SetBounds(18, 43, 630, 36);
+            packageStatus.ForeColor = Muted; packageStatus.SetBounds(18, 35, 630, 36);
             packageCard.Resize += (sender, args) => { packageStatus.Width = packageTitle.Width = Math.Max(100, packageCard.ClientSize.Width - 36); };
             packageCard.Controls.Add(packageTitle); packageCard.Controls.Add(packageStatus); layout.Controls.Add(packageCard, 0, 2);
 
@@ -75,7 +76,7 @@ namespace UmbraSuite.Injector
 
             games.SelectedIndexChanged += async (sender, args) => { if (!refreshing && !busy) await UpdateSelectedAsync(); };
             inject.Click += async (sender, args) => await InjectAsync();
-            refresh.Click += async (sender, args) => { bundle = null; compatibleIdentity = null; lastAttemptError = null; await RefreshAsync(); };
+            refresh.Click += async (sender, args) => { bundle = null; checkedGameIdentity = null; compatibilityWarning = null; lastAttemptError = null; await RefreshAsync(); };
             launch.Click += (sender, args) => Open("steam://rungameid/632360");
             logs.Click += (sender, args) => { Directory.CreateDirectory(Diagnostics.DirectoryPath); Open(Diagnostics.DirectoryPath); };
             timer.Tick += async (sender, args) => await RefreshAsync();
@@ -137,6 +138,7 @@ namespace UmbraSuite.Injector
         {
             inject.Enabled = false; inject.Text = "Inject menu";
             packageStatus.Text = bundle == null ? packageError : "Hallowed Concepts  /  Verified release " + bundle.Version;
+            packageStatus.ForeColor = Muted;
             var game = games.SelectedItem as GameProcess;
             launch.Enabled = !busy && games.Items.Count == 0;
             if (game == null)
@@ -148,18 +150,24 @@ namespace UmbraSuite.Injector
             gameStatus.Text = game.MonoReady ? "Game detected. Mono runtime is ready." : "Game is starting…";
             if (bundle == null) { ShowMessage(packageError); return; }
             if (!game.MonoReady) { ShowMessage("Wait for the game's main menu to appear."); return; }
-            if (compatibleIdentity != game.Identity + bundle.Module)
+            if (checkedGameIdentity != game.Identity + bundle.Module)
             {
                 try
                 {
                     var selectedBundle = bundle;
-                    await Task.Run(() => selectedBundle.VerifyGame(game.Executable));
+                    string warning = await Task.Run(() => selectedBundle.CheckGameCompatibility(game.Executable));
                     if (IsDisposed || bundle != selectedBundle || (games.SelectedItem as GameProcess)?.Identity != game.Identity || busy) return;
-                    compatibleIdentity = game.Identity + bundle.Module;
+                    compatibilityWarning = warning;
+                    checkedGameIdentity = game.Identity + bundle.Module;
                 }
                 catch (Exception error) { ShowMessage(error.Message); return; }
             }
             if (IsDisposed || (games.SelectedItem as GameProcess)?.Identity != game.Identity || busy) return;
+            if (!string.IsNullOrEmpty(compatibilityWarning))
+            {
+                packageStatus.Text = compatibilityWarning;
+                packageStatus.ForeColor = Warning;
+            }
             string state = InjectionSession.State(game, bundle, out string detail);
             inject.Enabled = !busy && (state == "available" || state == "unloaded");
             inject.Text = state == "ready" || state == "degraded" ? "Menu active" : state == "waiting" ? "Waiting for menu…" : "Inject menu";

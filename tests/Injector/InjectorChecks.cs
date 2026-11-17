@@ -83,13 +83,25 @@ internal static class InjectorChecks
         File.Copy("vendor/SharpMonoInjector/bin/Release/SharpMonoInjector.dll", Path.Combine(bundleDir, "SharpMonoInjector.dll"), true);
         string gameDir = PathFor("fake-game"), managed = Path.Combine(gameDir, "Risk of Rain 2_Data", "Managed"); Directory.CreateDirectory(managed);
         string gameDll = Path.Combine(managed, "RoR2.dll"); File.WriteAllText(gameDll, "compatibility fingerprint fixture");
-        var document = new XmlDocument(); document.LoadXml("<umbra protocol='1' module='" + Guid.NewGuid().ToString("D") + "' version='4.1.1' gameSha256='" + Bundle.Hash(gameDll) + "'/>");
+        var document = new XmlDocument(); document.LoadXml("<umbra protocol='1' module='" + Guid.NewGuid().ToString("D") + "' version='4.1.2' gameSha256='" + Bundle.Hash(gameDll) + "'/>");
         foreach (string name in new[] { "UmbraMenu.dll", "SharpMonoInjector.dll" })
         { var file = document.CreateElement("file"); file.SetAttribute("name", name); file.SetAttribute("sha256", Bundle.Hash(Path.Combine(bundleDir, name))); document.DocumentElement.AppendChild(file); }
         string manifest = Path.Combine(bundleDir, "bundle.xml"); document.Save(manifest);
-        var bundle = Bundle.Load(bundleDir); bundle.VerifyGame(Path.Combine(gameDir, "Risk of Rain 2.exe"));
-        Check(bundle.Version == "4.1.1" && File.Exists(bundle.MenuPath), "A complete matching bundle must pass metadata and checksum validation.");
-        File.AppendAllText(gameDll, "updated"); Throws<InvalidDataException>(() => bundle.VerifyGame(Path.Combine(gameDir, "Risk of Rain 2.exe")), "A game update must block the mismatched release.");
+        string gameExecutable = Path.Combine(gameDir, "Risk of Rain 2.exe");
+        var bundle = Bundle.Load(bundleDir);
+        Check(bundle.Version == "4.1.2" && File.Exists(bundle.MenuPath), "A complete matching bundle must pass metadata and checksum validation.");
+        Check(bundle.CheckGameCompatibility(gameExecutable) == string.Empty, "A matching game build must not show a compatibility warning.");
+        File.AppendAllText(gameDll, "updated");
+        string warning = bundle.CheckGameCompatibility(gameExecutable);
+        Check(warning.StartsWith("Warning:") && warning.Contains("still inject"), "A different game build must warn without blocking injection.");
+        var oldBundle = Bundle.Load(bundleDir);
+        Check(oldBundle.CheckGameCompatibility(gameExecutable) == warning, "Reloading an older bundle in the helper must preserve advisory compatibility.");
+        var updatedGame = new GameProcess { Id = 70003, StartTicks = 99003, Executable = gameExecutable };
+        using (var allowed = new InjectionSession(updatedGame, oldBundle, Root))
+        { Check(InjectionSession.State(updatedGame, oldBundle, out _, Root) == "pending", "A mismatched game build must be able to begin an injection attempt."); allowed.AbandonBeforeRemoteExecution(); }
+        File.Delete(gameDll);
+        Throws<FileNotFoundException>(() => bundle.CheckGameCompatibility(gameExecutable), "A missing game assembly must remain an installation error.");
+        File.WriteAllText(gameDll, "compatibility fingerprint fixture");
         string backend = Path.Combine(bundleDir, "SharpMonoInjector.dll"); File.AppendAllText(backend, "changed");
         Throws<InvalidDataException>(() => Bundle.Load(bundleDir), "Modified or mixed dependencies must be rejected before injection.");
         File.Copy("vendor/SharpMonoInjector/bin/Release/SharpMonoInjector.dll", backend, true);

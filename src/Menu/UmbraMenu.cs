@@ -12,7 +12,7 @@ namespace UmbraMenu
     {
         public const string
             NAME = "U M B R A",
-            VERSION = "4.1.1",
+            VERSION = "4.1.2",
             DLC_NAME = "Hallowed Concepts";
 
 

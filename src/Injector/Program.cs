@@ -32,7 +32,8 @@ namespace UmbraSuite.Injector
                 if (game.StartTicks != ticks) throw new InvalidOperationException("The game restarted during injection.");
                 game.VerifyIdentity();
                 var bundle = Bundle.Load(AppDomain.CurrentDomain.BaseDirectory);
-                bundle.VerifyGame(game.Executable);
+                string warning = bundle.CheckGameCompatibility(game.Executable);
+                if (!string.IsNullOrEmpty(warning)) Diagnostics.Write(warning);
                 backend = new MonoInjector(pid);
                 if (!backend.Is64Bit) throw new InvalidOperationException("This release requires the 64-bit game.");
                 byte[] assembly = File.ReadAllBytes(bundle.MenuPath);

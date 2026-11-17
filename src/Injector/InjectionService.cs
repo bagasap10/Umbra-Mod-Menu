@@ -10,7 +10,8 @@ namespace UmbraSuite.Injector
     {
         public static async Task<string> InjectAsync(GameProcess game, Bundle bundle, Action<string> progress, string executable)
         {
-            await Task.Run(() => { game.VerifyIdentity(); bundle.VerifyGame(game.Executable); }).ConfigureAwait(false);
+            string warning = await Task.Run(() => { game.VerifyIdentity(); return bundle.CheckGameCompatibility(game.Executable); }).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(warning)) progress(warning);
             using (var session = new InjectionSession(game, bundle))
             {
                 progress("Connecting to the game…");

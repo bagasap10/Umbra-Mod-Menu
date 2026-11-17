@@ -1,10 +1,12 @@
 # Run Umbra Suite
 
-**Version 4.1.1 / Hallowed Concepts (DLC#4).** Suite versions use DLC count.feature update.fix numbering.
+**Version 4.1.2 / Hallowed Concepts (DLC#4).** Suite versions use DLC count.feature update.fix numbering.
 
 Extract the full release ZIP and double-click **UmbraInjector.exe**. The launcher does not need a separate injector installation, an arbitrary DLL picker, a manual PID, or a working directory set by a shortcut.
 
-Use **Start game** to ask Steam to launch Risk of Rain 2, or start the game normally. The launcher checks every two seconds. If more than one game process exists, select the one to use. It enables **Inject menu** after the game runtime and matching package are available.
+Use **Start game** to ask Steam to launch Risk of Rain 2, or start the game normally. The launcher checks every two seconds. If more than one game process exists, select the one to use. It enables **Inject menu** after the game runtime and a valid release package are available.
+
+If the game has updated since the menu was built, the package card shows an amber warning. **Inject menu** stays enabled, and clicking it proceeds without an extra confirmation dialog. The helper also permits the version difference. Some features may fail if the game changed their APIs; using a build made against the current game is recommended.
 
 Click **Inject menu** once. The UI remains responsive while the helper performs native injection. The menu then waits for the game's catalogs and initializes on the main thread. The launcher confirms **Menu active** after the menu's actual startup, rather than reporting success merely because the DLL was submitted.
 
@@ -26,7 +28,8 @@ Open **Cheats**, directly below Overview, for resource, survival, movement, comb
 | Game is starting / catalogs loading | Wait for loading to complete; the launcher updates automatically. |
 | More than one game | Select the desired PID in the dropdown. |
 | Missing or mismatched release file | Extract a fresh complete release ZIP; do not mix DLLs from different releases. |
-| Different game update | Rebuild with `scripts/Build.ps1 -GameDir <your installation>` or use a release built for that update. |
+| Warning: game version differs | You can still click **Inject menu**. If features fail, rebuild with `scripts/Build.ps1 -GameDir <your installation>` or use a newer release. |
+| Game installation is missing RoR2.dll | Verify the game's files in Steam before injecting. |
 | Game access unavailable | Run the game and launcher at the same privilege level. Normal non-administrator launch is the default. |
 | Menu already active | Use the displayed toggle key; the injector prevents a second copy. |
 | Different Umbra build already loaded | Restart the game before injecting the new build. |
@@ -39,4 +42,4 @@ The launcher leaves the game running on a timeout. Do not delete session markers
 
 Bulk item operations limit a single grant quantity to 1,000 per item and a single roll to 500 items to bound work from one click. Individual integer stack overflow is rejected. Item packs resolve and validate every ingredient before granting any. These limits do not change existing inventory or recipe quantities.
 
-For release acceptance, start a fresh game, inject once at the title screen, start a run, test item/search/pack/removal actions, toggle ESP, travel to another stage, return to the title screen, unload, and reinject the same build. Test Hallowed portals and interactables on the host of an active run. Test the game update and missing-file messages separately. Automated source tests cover the modeled behaviors, while real native injection and Unity gameplay need this live pass.
+For release acceptance, start a fresh game, inject once at the title screen, start a run, test item/search/pack/removal actions, toggle ESP, travel to another stage, return to the title screen, unload, and reinject the same build. Test Hallowed portals and interactables on the host of an active run. For a package targeting an older game build, verify the warning is visible and injection proceeds. Test missing-file errors separately. Automated source tests cover the modeled behaviors, while real native injection and Unity gameplay need this live pass.

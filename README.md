@@ -2,11 +2,11 @@
 
 Source and release tooling for the **Umbra Menu** and a new **Umbra Injector** launcher for Risk of Rain 2, including Hallowed Concepts. This directory is independent of the older menu checkout and binary-only injector.
 
-Version **4.1.1** uses **DLC count.feature update.fix** numbering. The first number identifies the latest supported DLC: **4 = Hallowed Concepts**. The second increases for feature updates; the third increases for fixes. The menu and injector share the same suite version.
+Version **4.1.2** uses **DLC count.feature update.fix** numbering. The first number identifies the latest supported DLC: **4 = Hallowed Concepts**. The second increases for feature updates; the third increases for fixes. The menu and injector share the same suite version.
 
 ## Use the release
 
-1. Extract the entire `Umbra-Suite-4.1.1-win-x64.zip` into one folder.
+1. Extract the entire `Umbra-Suite-4.1.2-win-x64.zip` into one folder.
 2. Run `UmbraInjector.exe`. Start the game yourself, or use **Start game** in the launcher.
 3. The launcher finds the game automatically. Click **Inject menu** once it shows ready.
 4. Wait for **Menu active**. Open/close the menu with **Insert** or **Numpad 0**; **Numpad 1** goes back.
@@ -33,8 +33,8 @@ The solution is `Umbra-Suite.sln`. For Visual Studio, supply `/p:GameDir=...` wh
 Outputs:
 
 - `artifacts/release/`: ready-to-run injector, menu, backend, compatibility manifest and licenses.
-- `artifacts/Umbra-Suite-4.1.1-win-x64.zip`: release ZIP for GitHub Releases.
-- `artifacts/Umbra-Suite-4.1.1-source.zip`: clean source ZIP, including all buildable dependency source.
+- `artifacts/Umbra-Suite-4.1.2-win-x64.zip`: release ZIP for GitHub Releases.
+- `artifacts/Umbra-Suite-4.1.2-source.zip`: clean source ZIP, including all buildable dependency source.
 - `artifacts/SHA256SUMS.txt`: package checksums.
 - `artifacts/tests/previews/`: off-screen launcher/menu renders produced by the checks.
 
@@ -46,7 +46,7 @@ The source includes the MIT-licensed injection backend pinned to an upstream com
 
 ## What changed
 
-The launcher detects the correct game process, validates bundle hashes and game compatibility, keeps native injection in a separate helper, and waits for a startup marker written by the menu. A durable per-process attempt gate prevents duplicate injection and unsafe retries after timeouts. A game update requires a freshly built matching package.
+The launcher detects the correct game process, validates bundle hashes and checks game compatibility, keeps native injection in a separate helper, and waits for a startup marker written by the menu. A durable per-process attempt gate prevents duplicate injection and unsafe retries after timeouts. A different game version shows an amber warning and leaves **Inject menu** available without an extra confirmation. Rebuilding against the current game is recommended when features fail.
 
 Menu startup waits for catalog availability and creates Unity objects on the game's main thread. Unload no longer loops around deferred `Destroy`. Owned textures and Addressables handles are released; icon loading has a 128-entry cache; enemy collection reuses a list at 10 Hz; ESP draws only during repaint; idle stat modifiers avoid repeated recalculation. Managed feature failures back off and pause after repeated errors instead of flooding each frame.
 
@@ -54,7 +54,7 @@ The native backend releases reserved pages with `MEM_RELEASE`, closes thread/pro
 
 All existing rarity/DLC sections, catalog icons, item/removal/equipment/chest search, item packs, portals, ESP and resize/back-key features are retained. The **Cheats** section sits directly below Overview and groups resources, survival, movement, combat, stages and loot. It includes eight new character cheats and the former World Cheats controls, plus moved resource, God Mode, Aimbot, Infinite Skills, Flight and instant-charging controls. See [Cheats](docs/cheats.md) for controls and limits.
 
-See [4.1.1 release notes](docs/release-notes-4.1.1.md), [item packs](docs/item-packs.md), [portal images](docs/portal-icons.md), and [architecture and validation](docs/ARCHITECTURE.md).
+See [4.1.2 release notes](docs/release-notes-4.1.2.md), [item packs](docs/item-packs.md), [portal images](docs/portal-icons.md), and [architecture and validation](docs/ARCHITECTURE.md).
 
 Automated checks do not inject a running game. Native injection and gameplay must still be tested in-game; these changes reduce identified risks and cannot guarantee a crash-free game session.
 
